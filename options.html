@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="options">
+      <div class="switch-container">
+        <label class="switch">
+          <input id="enabledOpt" type="checkbox" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="input-group">
+        <label>Number of decimals:</label>
+        <input id="decimals" class="form-input" type="number" min="0" max="18" value="2">
+      </div>
+      <div class="input-group">
+        <label>Conversion rate interval:</label>
+        <input id="interval" class="form-input" type="number" min="3" max="3600" value="300">
+        <span>secs.</span>
+      </div>
+      <div class="input-group" id="currencies">
+        <label>Currencies:</label>
+        
+      </div>
+
+    </div>
+  </body>
+
+  <script src="options.js"></script>
+</html>

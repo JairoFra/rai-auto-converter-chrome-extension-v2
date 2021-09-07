@@ -1,6 +1,6 @@
 const initialData = {
   decimals: -1,
-  refreshConversionTime: 300,
+  refreshInterval: 300,
   enabled: true,
   currencies: currencies
 }
@@ -11,7 +11,7 @@ let conversionInterval;
 let raiUsdConversion;
 
 /**
- * Stores default preferences on extension intalled
+ * Stores default initial data on extension intalled
  */
 chrome.runtime.onInstalled.addListener(reason => {
   if (reason !== chrome.runtime.OnInstalledReason.INSTALL) { return }
@@ -20,7 +20,7 @@ chrome.runtime.onInstalled.addListener(reason => {
 
 
 /**
- * Gets stored preferences
+ * Gets stored data
  */
 chrome.storage.sync.get('data', (res) => {
   if (chrome.runtime.lastError) {
@@ -36,7 +36,7 @@ chrome.storage.sync.get('data', (res) => {
   updateConversions();
   conversionInterval = setInterval(async () => {
     updateConversions();
-  }, storedData.refreshConversionTime * 1000);
+  }, storedData.refreshInterval * 1000);
 });
 
 
@@ -55,17 +55,26 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 
 /**
- * Listens to preferences updates sent from the popup
+ * Listens to stored data updates sent from the popup and options
  */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.refreshConversionTime != storedData.refreshConversionTime) {
-    clearInterval(conversionInterval);
-    conversionInterval = setInterval(async () => {
-      updateConversions();
-    }, message.refreshConversionTime * 1000);
-  }
+  switch (message.type) {
+    case 'enabled': 
+      storedData.enabled = message.value;
+      break;
 
-  storedData = message;
+    case 'interval': 
+      clearInterval(conversionInterval);
+      conversionInterval = setInterval(async () => {
+        updateConversions();
+      }, message.value * 1000);
+      storedData.enabled = message.value;
+      break;
+
+    case 'decimals': 
+      storedData.decimals = message.value;
+      break;
+  }
 
   // Forward changes to the foreground
   chrome.tabs.query({}, tabs => {
@@ -88,45 +97,21 @@ async function updateConversions() {
       currency.conversion = directConversions[id];
       
       // Send new USD conversion to the popup
-      // TODO allow set prefered currency in configuration?
       if (id == 'usd') {
         raiUsdConversion = currency.conversion;
-        chrome.runtime.sendMessage({ conversion: raiUsdConversion });
+        chrome.runtime.sendMessage({ type: 'conversion', value: raiUsdConversion });
       }
     }
-
-    // storedData.currencies.forEach(currency => {
-    //   if (directConversions[currency.id]) {
-    //     currency.conversion =  directConversions[currency.id];
-    //     // Send new USD conversion to the popup
-    //     // TODO allow set prefered currency in configuration?
-    //     if (currency.id == 'usd') {
-    //       chrome.runtime.sendMessage({ conversion: currency.conversion });
-    //     }
-    //   }
-    // });
   }
 
   const indirectConversions = await getIndirectConversions();
+
   if (indirectConversions) {
     for(let id in indirectConversions) {
       let currency = storedData.currencies.find(c => c.id == id);
       currency.conversion = raiUsdConversion / indirectConversions[id]['usd'];
     }
   }
-
-  // if (indirectConversions) {
-  //   storedData.currencies.forEach(currency => { // TODO change
-  //     if (directConversions[currency.id]) {
-  //       currency.conversion =  directConversions[currency.id];
-  //       // Send new USD conversion to the popup
-  //       // TODO allow set prefered currency in configuration?
-  //       if (currency.id == 'usd') {
-  //         chrome.runtime.sendMessage({ conversion: currency.conversion });
-  //       }
-  //     }
-  //   });
-  // }
 
   // Store current conversions
   chrome.storage.sync.set({ data: storedData });

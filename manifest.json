@@ -1,7 +1,7 @@
 {
-  "name": "RAI Auto-Converter",
+  "name": "RAI Auto-Converter v2",
   "description": "RAI Automatic Converter",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "manifest_version": 3,
   "background": {
     "service_worker": "background-loader.js"
@@ -22,5 +22,6 @@
     "32": "/images/icon_32.png",
     "48": "/images/icon_48.png",
     "128": "/images/icon_128.png"
-  }
+  },
+  "options_page": "options.html"
 }

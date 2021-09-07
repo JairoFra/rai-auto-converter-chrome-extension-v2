@@ -1,4 +1,4 @@
-body {
+.popup {
     font-family: 'Inter', sans-serif;
     color: rgb(44, 44, 44);
     background-color: rgb(240, 240, 240);
@@ -8,35 +8,35 @@ body {
     padding-bottom: 20px;
 }
 
-.title {
+.popup .title {
   background-color: #24c7a7;
   padding: 8px 15px;
 }
 
-.title h1 {
+.popup .title h1 {
   text-align: left;
   font-size: 1.3rem;
   margin: 0;
   color: white;
 }
 
-.content {
+.popup .content {
   padding: 15px 25px;
 }
 
-.price {
+.popup .price {
   font-size: 1.4rem;
   font-weight: bold;
   display: table;
   margin: 0 auto 8px auto;
 }
 
-.price img {
+.popup .price img {
   height: 48px;
   margin-right: 8px;
 }
 
-.price img, .price span {
+.popup .price img, .popup .price span {
   display: table-cell;
   vertical-align: middle;
 }

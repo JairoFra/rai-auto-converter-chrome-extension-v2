@@ -6,7 +6,7 @@ let enabledCurrencies = [];
 /**
  * Gets stored data
  */
- chrome.storage.sync.get('data', (res) => {
+chrome.storage.sync.get('data', (res) => {
   if (chrome.runtime.lastError) {
     console.log(chrome.runtime.lastError);
   }

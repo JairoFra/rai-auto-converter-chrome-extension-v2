@@ -7,32 +7,26 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="title">
-      <h1><span>RAI Auto-Converter</span>
-        <div class="switch-container">
-          <label class="switch">
-            <input id="enabled" type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
+    <div class="popup">
+      <div class="title">
+        <h1><span>RAI Auto-Converter</span>
+          <div class="switch-container">
+            <label class="switch">
+              <input id="enabledPop" type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </h1>
+      </div>
+      <div class="content">
+        <div class="price">
+          <img src="./images/icon128.png">
+          <span>1 RAI = $</span><span id="raiPrice">?</span>
         </div>
-      </h1>
-    </div>
-    <div class="content">
-      <div class="price">
-        <img src="./images/icon128.png">
-        <span>1 RAI = $</span><span id="raiPrice">?</span>
-      </div>
-      <div class="input-group">
-        <label>Number of decimals:</label>
-        <input id="decimals" class="form-input" type="number" min="0" max="18" value="2">
-      </div>
-      <div class="input-group">
-        <label>Conversion rate interval:</label>
-        <input id="interval" class="form-input" type="number" min="3" max="3600" value="300">
-        <span>secs.</span>
+        <button id="optionsBtn">Options</button>
       </div>
     </div>
-  </div>
+  </body>
 
   <script src="popup.js"></script>
 </html>
