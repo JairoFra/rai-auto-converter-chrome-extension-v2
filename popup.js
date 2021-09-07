@@ -1,6 +1,6 @@
 let storedData;
 
-const minDecimals = 0;
+const minDecimals = -1; // TODO change to 0
 const maxDecimals = 18;
 const minInterval = 3;
 const maxInterval = 3600;
@@ -22,11 +22,12 @@ chrome.storage.sync.get('data', (res) => {
 
   storedData = res.data;
 
-  raiPriceEl.textContent = Number(storedData.conversion).toFixed(2);
+  // TODO allow set prefered currency in configuration?
+  const dollar = storedData.currencies.find(currency => currency.id == 'usd');
+  raiPriceEl.textContent = Number(dollar.conversion).toFixed(2);
   decimalsInput.value = storedData.decimals;
   intervalInput.value = storedData.refreshConversionTime;
   enabledInput.checked = storedData.enabled;
-  priceTypeInput.value = storedData.marketPrice ? '1' : '0';
 });
 
 
@@ -82,15 +83,6 @@ intervalInput.addEventListener('change', e => {
  */
 enabledInput.addEventListener('change', e => {
   storedData.enabled = e.target.checked;
-  updatePreferences();
-});
-
-
-/**
- * Manages changes in price type input
- */
-priceTypeInput.addEventListener('change', e => {
-  storedData.marketPrice = Boolean(Number(e.target.value));
   updatePreferences();
 });
 
