@@ -8,6 +8,7 @@ const maxInterval = 3600;
 const decimalsInput = document.getElementById('decimals');
 const intervalInput = document.getElementById('interval');
 const enabledInput = document.getElementById('enabledOpt');
+const darkModeInput = document.getElementById('darkMode');
 const priceTypeInput = document.getElementById('priceType');
 const selectAllFiatBtn = document.getElementById('selectAllFiat');
 const unselectAllFiatBtn = document.getElementById('unselectAllFiat');
@@ -31,6 +32,10 @@ chrome.storage.local.get('data', (res) => {
   decimalsInput.value = storedData.decimals;
   intervalInput.value = storedData.refreshInterval;
   enabledInput.checked = storedData.enabled;
+  darkModeInput.checked = storedData.darkMode;
+  if (storedData.darkMode) {
+    document.body.classList.add('dark');
+  }
 });
 
 
@@ -109,6 +114,26 @@ enabledInput.addEventListener('change', e => {
 
   // Sends message to the background and popup
   chrome.runtime.sendMessage({ type: 'enabled', value: storedData.enabled });
+});
+
+
+/**
+ * Manages changes in dark mode switch
+ */
+darkModeInput.addEventListener('change', e => {
+  storedData.darkMode = e.target.checked;
+
+  if (storedData.darkMode) {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
+
+  // Updates preferences
+  chrome.storage.local.set({ data: storedData });
+
+  // Sends message to the background and popup
+  chrome.runtime.sendMessage({ type: 'darkMode', value: storedData.darkMode });
 });
 
 

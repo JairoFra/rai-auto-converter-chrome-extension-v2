@@ -105,6 +105,8 @@ The conversion rate is continuously updated in order to offer an accurate conver
 * Maximum: 3600 (1 hour)
 * Default: 300 (5 minutes)
 
+#### Dark mode
+Toggle between light mode and dark mode interface.
 
 ## Further developments
 New features to be added:

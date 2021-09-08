@@ -3,6 +3,7 @@ let storedData;
 const raiPriceEl = document.getElementById('raiPrice');
 const enabledInput = document.getElementById('enabledPop');
 const optionsBtn = document.getElementById('optionsBtn');
+const reflexerBtn = document.getElementById('reflexerPop');
 
 
 /**
@@ -18,20 +19,35 @@ chrome.storage.local.get('data', (res) => {
   const dollar = storedData.currencies.find(currency => currency.id == 'usd');
   raiPriceEl.textContent = Number(dollar.conversion).toFixed(2);
   enabledInput.checked = storedData.enabled;
+
+  if (storedData.darkMode) {
+    document.body.classList.add('dark');
+  }
 });
 
 
 /**
- * Listens to conversion updates sent from the backend and options  
+ * Listens to updates sent from the backend and options  
  */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type && message.type == 'conversion') {
-    // Update price in the front end
-    // TODO localize
-    console.log("price updated: ", message.value);
-    raiPriceEl.textContent = Number(message.value).toFixed(2);
-  } else if (message.type && message.type == 'enabled') {
-    enabledInput.checked = message.value;
+  switch (message.type) {
+    case 'conversion': 
+      // TODO localize
+      console.log("price updated: ", message.value);
+      raiPriceEl.textContent = Number(message.value).toFixed(2);
+      break;
+
+    case 'enabled': 
+      enabledInput.checked = message.value;
+      break;
+
+    case 'darkMode': 
+      if (message.value) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+      break;
   }
 });
 
@@ -55,4 +71,12 @@ enabledInput.addEventListener('change', e => {
  */
 optionsBtn.addEventListener('click', e => {
   chrome.runtime.openOptionsPage();
+});
+
+
+/**
+ * Opens reflexer website when icon is clicked
+ */
+reflexerBtn.addEventListener('click', e => {
+  chrome.tabs.create({url: 'https://reflexer.finance/'});
 });
