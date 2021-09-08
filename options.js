@@ -9,11 +9,16 @@ const decimalsInput = document.getElementById('decimals');
 const intervalInput = document.getElementById('interval');
 const enabledInput = document.getElementById('enabledOpt');
 const priceTypeInput = document.getElementById('priceType');
+const selectAllFiatBtn = document.getElementById('selectAllFiat');
+const unselectAllFiatBtn = document.getElementById('unselectAllFiat');
+const selectAllCryptoBtn = document.getElementById('selectAllCrypto');
+const unselectAllCryptoBtn = document.getElementById('unselectAllCrypto');
+
 
 /**
  * Gets stored data
  */
-chrome.storage.sync.get('data', (res) => {
+chrome.storage.local.get('data', (res) => {
   if (chrome.runtime.lastError) {
     console.log(chrome.runtime.lastError);
   }
@@ -42,32 +47,34 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 /**
  * Manages changes in decimals input
  */
-decimalsInput.addEventListener('change', e => {
-  let value = e.target.value;
+let decimalsChanges = e => {
+    let value = e.target.value;
+  
+    if (value < minDecimals) {
+      value = minDecimals;
+      decimalsInput.value = value;
+    } else if (value > maxDecimals) {
+      value = maxDecimals;
+      decimalsInput.value = value;
+    }
+  
+    storedData.decimals = value;
+  
+    // Updates preferences
+    chrome.storage.local.set({ data: storedData });
+      
+    // Sends message to the background and popup
+    chrome.runtime.sendMessage({ type: 'decimals', value: storedData.decimals });
+};
 
-  if (value < minDecimals) {
-    value = minDecimals;
-    decimalsInput.value = value;
-  } else if (value > maxDecimals) {
-    value = maxDecimals;
-    decimalsInput.value = value;
-  }
-
-  storedData.decimals = value;
-
-  // Updates preferences
-  chrome.storage.sync.set({ data: storedData });
-    
-  // Sends message to the background and popup
-  chrome.runtime.sendMessage({ type: 'decimals', value: storedData.decimals });
-
-});
+decimalsInput.addEventListener('change', decimalsChanges);
+decimalsInput.addEventListener('keyup', decimalsChanges);
 
 
 /**
  * Manages changes in interval input
  */
-intervalInput.addEventListener('change', e => {
+let intervalChanges = e => {
   let value = e.target.value;
 
   if (value < minInterval) {
@@ -81,11 +88,14 @@ intervalInput.addEventListener('change', e => {
   storedData.refreshInterval = value;
 
   // Updates preferences
-  chrome.storage.sync.set({ data: storedData });
+  chrome.storage.local.set({ data: storedData });
   
   // Sends message to the background and popup
   chrome.runtime.sendMessage({ type: 'interval', value: storedData.refreshInterval });
-});
+};
+
+intervalInput.addEventListener('change', intervalChanges);
+intervalInput.addEventListener('keyup', intervalChanges);
 
 
 /**
@@ -95,15 +105,19 @@ enabledInput.addEventListener('change', e => {
   storedData.enabled = e.target.checked;
 
   // Updates preferences
-  chrome.storage.sync.set({ data: storedData });
+  chrome.storage.local.set({ data: storedData });
 
   // Sends message to the background and popup
   chrome.runtime.sendMessage({ type: 'enabled', value: storedData.enabled });
 });
 
 
+/**
+ * Renders available currencies
+ */
 function renderCurrencyOptions(currency) {
-  let container = document.getElementById('currencies');
+  let fiatContainer = document.getElementById('fiatCurrencies');
+  let cryptoContainer = document.getElementById('cryptoCurrencies');
 
   let checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -116,29 +130,85 @@ function renderCurrencyOptions(currency) {
   label.htmlFor = 'id';
   label.appendChild(document.createTextNode(currency.ticker));
 
-  container.appendChild(checkbox);
-  container.appendChild(label);
+  if (currency.fiat) {
+    fiatContainer.appendChild(checkbox);
+    fiatContainer.appendChild(label);
+  } else {
+    cryptoContainer.appendChild(checkbox);
+    cryptoContainer.appendChild(label);
+  }
 
-  listenCurrenciesChange();
+  startCurrencyListeners();
 }
 
 
 /**
- * Manages changes in currencies selection
+ * Starts listeners for currency inputs
+ * They cannot be started until they have been rendered
  */
-function listenCurrenciesChange() {
+function startCurrencyListeners() {
   const currenciesInputs = document.getElementById('currencies').querySelectorAll('input');
+  const fiatCurrenciesInputs = document.getElementById('fiatCurrencies').querySelectorAll('input');
+  const cryptoCurrenciesInputs = document.getElementById('cryptoCurrencies').querySelectorAll('input');
 
   currenciesInputs.forEach(element => {
     element.addEventListener('change', e => {
-      console.log(e.target.id, e.target.checked);
-      // storedData.currencies = e.target.checked;
+      let changedCurrency = storedData.currencies.find(currency => currency.id == e.target.id);
+      changedCurrency.enabled = e.target.checked;
     
-      // // Updates preferences
-      // chrome.storage.sync.set({ data: storedData });
-    
-      // // Sends message to the background and popup
-      // chrome.runtime.sendMessage({ type: 'currencies', value: storedData.currencies });
+      updateCurrencies();
     });
   });
+
+  selectAllFiatBtn.addEventListener('click', e => {
+    fiatCurrenciesInputs.forEach(element => {
+      element.checked = true;
+    });
+
+    storedData.currencies.filter(currency => currency.fiat).forEach(currency => currency.enabled = true);
+
+    updateCurrencies();
+  });
+
+  unselectAllFiatBtn.addEventListener('click', e => {
+    fiatCurrenciesInputs.forEach(element => {
+      element.checked = false;
+    });
+
+    storedData.currencies.filter(currency => currency.fiat).forEach(currency => currency.enabled = false);
+
+    updateCurrencies();
+  });
+
+  selectAllCryptoBtn.addEventListener('click', e => {
+    cryptoCurrenciesInputs.forEach(element => {
+      element.checked = true;
+    });
+
+    storedData.currencies.filter(currency => !currency.fiat).forEach(currency => currency.enabled = true);
+
+    updateCurrencies();
+  });
+
+  unselectAllCryptoBtn.addEventListener('click', e => {
+    cryptoCurrenciesInputs.forEach(element => {
+      element.checked = false;
+    });
+
+    storedData.currencies.filter(currency => !currency.fiat).forEach(currency => currency.enabled = false);
+
+    updateCurrencies();
+  });
+}
+
+
+/**
+ * Updates currencies preferences
+ */
+function updateCurrencies() {
+  // Updates preferences
+  chrome.storage.local.set({ data: storedData });
+
+  // Sends message to the background and popup
+  chrome.runtime.sendMessage({ type: 'currencies', value: storedData.currencies });
 }

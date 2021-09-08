@@ -7,15 +7,15 @@
 </p>
 
 
-Extension for Chromium based browsers to automatically convert USD to [RAI](https://reflexer.finance/).
+Extension for Chromium based browsers to automatically convert different currencies to [RAI](https://reflexer.finance/).
 
-  
-It has been developed in pure JS, without external dependencies, and following the [Chrome Developers best practices](https://developer.chrome.com/docs/webstore/best_practices/), which include using the latest [Manifest V3](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/). 
-  
+
+The extension is an evolution of [this](https://github.com/JairoFra/rai-auto-converter-chrome-extension) previous project. It has been developed in pure JS, without external dependencies, and following the [Chrome Developers best practices](https://developer.chrome.com/docs/webstore/best_practices/), which include using the latest [Manifest V3](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/). 
+
 
 ## Installation
 
-You can install it from the [Chrome Web Store](https://chrome.google.com/webstore/detail/rai-auto-converter/jmjmjclpjkjcnmgidjcdldoldejehnlh).
+You can install it from the [Chrome Web Store](TODO).
 
 Alternatively, to install the extension locally:
 1. [**Download**](https://github.com/JairoFra/rai-auto-converter-chrome-extension-v2/archive/refs/heads/master.zip) the repository and unpack it.
@@ -87,22 +87,17 @@ Also, it can be tested in some websites like:
 
 ## Configuration options
 
-![screenshot3](/screenshots/screenshot3.png)
+TODO
 
 #### On/Off switch
-To start and stop automatic conversion of USD to RAI. Can be found at the top right corner and works in real time. 
+To start and stop automatic conversion to RAI. It works in real time. 
 
 #### Number of decimals
-The number of decimals in RAI amount to be displayed in the HTML. 
+The number of decimals in RAI amount to be displayed in the HTML.
+By default, the amount in RAI will be shown with the same number of decimals found in the original currency. However, the value of decimals to be shown can be adjusted by the user to a specific value.
 * Minimum: 0
 * Maximum: 18
-* Default: 2
-
-#### Type of price
-The type of price to be used in order to calculate the conversion from USD to price.
-* Redemption price: Fetches the last redemption price from the [RAI subgraph API](https://docs.reflexer.finance/api/api-endpoints)
-* Market price: Fetches the last market price from the [CoinGecko API](https://www.coingecko.com/api/documentations/v3)
-* Default: Redemption price
+* Default: Taken from converted amount
 
 #### Conversion rate interval
 The conversion rate is continuously updated in order to offer an accurate conversion without delays. The update interval time can be adjusted in seconds.
@@ -113,7 +108,7 @@ The conversion rate is continuously updated in order to offer an accurate conver
 
 ## Further developments
 New features to be added:
-* Conversion for other currencies
+* Expand the number of currencies supported
 * Blacklisting URLs
 * New proposals from the [Reflexer Labs](https://reflexer.finance/) community
 

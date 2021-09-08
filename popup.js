@@ -8,7 +8,7 @@ const optionsBtn = document.getElementById('optionsBtn');
 /**
  * Gets stored data
  */
-chrome.storage.sync.get('data', (res) => {
+chrome.storage.local.get('data', (res) => {
   if (chrome.runtime.lastError) {
     console.log(chrome.runtime.lastError);
   }
@@ -43,7 +43,7 @@ enabledInput.addEventListener('change', e => {
   storedData.enabled = e.target.checked;
 
   // Stores updated data
-  chrome.storage.sync.set({ data: storedData });
+  chrome.storage.local.set({ data: storedData });
   
   // Sends message to the background
   chrome.runtime.sendMessage({ type: 'enabled', value: storedData.enabled });

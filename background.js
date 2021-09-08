@@ -15,14 +15,14 @@ let raiUsdConversion;
  */
 chrome.runtime.onInstalled.addListener(reason => {
   if (reason !== chrome.runtime.OnInstalledReason.INSTALL) { return }
-  chrome.storage.sync.set({ data: initialData });
+  chrome.storage.local.set({ data: initialData });
 });
 
 
 /**
  * Gets stored data
  */
-chrome.storage.sync.get('data', (res) => {
+chrome.storage.local.get('data', (res) => {
   if (chrome.runtime.lastError) {
     console.log(chrome.runtime.lastError);
   }
@@ -74,6 +74,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case 'decimals': 
       storedData.decimals = message.value;
       break;
+
+    case 'currencies': 
+      storedData.currencies = message.value;
+      break;
   }
 
   // Forward changes to the foreground
@@ -114,7 +118,7 @@ async function updateConversions() {
   }
 
   // Store current conversions
-  chrome.storage.sync.set({ data: storedData });
+  chrome.storage.local.set({ data: storedData });
 
   // Send new conversions to the foreground
   chrome.tabs.query({}, tabs => {
