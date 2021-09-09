@@ -9,6 +9,7 @@ const decimalsInput = document.getElementById('decimals');
 const intervalInput = document.getElementById('interval');
 const enabledInput = document.getElementById('enabledOpt');
 const darkModeInput = document.getElementById('darkMode');
+const showBadgeInput = document.getElementById('showBadgeOpt');
 const priceTypeInput = document.getElementById('priceType');
 const selectAllFiatBtn = document.getElementById('selectAllFiat');
 const unselectAllFiatBtn = document.getElementById('unselectAllFiat');
@@ -26,13 +27,15 @@ chrome.storage.local.get('data', (res) => {
 
   storedData = res.data;
 
-  storedData.currencies.forEach(currency => {
-    renderCurrencyOptions(currency);
-  });
+  renderCurrencyOptions();
+  renderBlacklist();
+
   decimalsInput.value = storedData.decimals;
   intervalInput.value = storedData.refreshInterval;
   enabledInput.checked = storedData.enabled;
   darkModeInput.checked = storedData.darkMode;
+  showBadgeInput.checked = storedData.showBadge;
+
   if (storedData.darkMode) {
     document.body.classList.add('dark');
   }
@@ -138,30 +141,46 @@ darkModeInput.addEventListener('change', e => {
 
 
 /**
+ * Manages changes in show badge switch
+ */
+showBadgeInput.addEventListener('change', e => {
+  storedData.showBadge = e.target.checked;
+
+  // Updates preferences
+  chrome.storage.local.set({ data: storedData });
+
+  // Sends message to the background and popup
+  chrome.runtime.sendMessage({ type: 'showBadge', value: storedData.showBadge });
+});
+
+
+/**
  * Renders available currencies
  */
-function renderCurrencyOptions(currency) {
+function renderCurrencyOptions() {
   let fiatContainer = document.getElementById('fiatCurrencies');
   let cryptoContainer = document.getElementById('cryptoCurrencies');
 
-  let checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.name = currency.id;
-  checkbox.value = currency.id;
-  checkbox.id = currency.id;
-  checkbox.checked = currency.enabled;  
+  storedData.currencies.forEach(currency => {
+    let checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.name = currency.id;
+    checkbox.value = currency.id;
+    checkbox.id = currency.id;
+    checkbox.checked = currency.enabled;  
 
-  let label = document.createElement('label');
-  label.htmlFor = 'id';
-  label.appendChild(document.createTextNode(currency.ticker));
+    let label = document.createElement('label');
+    label.htmlFor = 'id';
+    label.appendChild(document.createTextNode(currency.ticker));
 
-  if (currency.fiat) {
-    fiatContainer.appendChild(checkbox);
-    fiatContainer.appendChild(label);
-  } else {
-    cryptoContainer.appendChild(checkbox);
-    cryptoContainer.appendChild(label);
-  }
+    if (currency.fiat) {
+      fiatContainer.appendChild(checkbox);
+      fiatContainer.appendChild(label);
+    } else {
+      cryptoContainer.appendChild(checkbox);
+      cryptoContainer.appendChild(label);
+    }
+  });
 
   startCurrencyListeners();
 }
@@ -237,3 +256,63 @@ function updateCurrencies() {
   // Sends message to the background and popup
   chrome.runtime.sendMessage({ type: 'currencies', value: storedData.currencies });
 }
+
+
+/**
+ * Renders available currencies
+ */
+function renderBlacklist() {
+  let blacklistContainer = document.getElementById('blacklist');
+  
+  storedData.blacklist.forEach(hostname => {
+    let div = document.createElement('div');
+
+    let span = document.createElement('span');
+    span.innerText = hostname;
+
+    let removeImg = document.createElement('img');
+    removeImg.src = './images/delete.png';
+    removeImg.classList = 'icon';
+
+    div.appendChild(span);
+    div.appendChild(removeImg);
+
+    blacklistContainer.appendChild(div);
+  });
+
+  startCurrencyListeners();
+}
+
+
+/**
+ * Starts listeners for blacklist items
+ * They cannot be started until they have been rendered
+ */
+function startCurrencyListeners() {
+  const blacklistButtons = document.getElementById('blacklist').querySelectorAll('img');
+
+  blacklistButtons.forEach(element => {
+    element.addEventListener('click', e => {
+      const index = storedData.blacklist.indexOf(e.target.previousSibling.innerText);
+      if (index > -1) {
+        storedData.blacklist.splice(index, 1);
+  
+        // Stores updated data
+        chrome.storage.local.set({ data: storedData });
+      
+        // Sends message to the background
+        chrome.runtime.sendMessage({ type: 'blacklist', value: storedData.blacklist });
+      }
+      
+      e.target.parentNode.remove();
+    });
+  });
+}
+
+
+
+
+// TODO remove
+document.getElementById('test1').addEventListener('click', e => {
+
+});

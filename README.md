@@ -1,14 +1,10 @@
 # RAI Auto-Converter
 
 <p align="center">
-
-<img  style="text-align: center;"  src="/images/icon128.png">
-
+<img style="text-align: center;" src="/images/icon128.png">
 </p>
 
-
 Extension for Chromium based browsers to automatically convert different currencies to [RAI](https://reflexer.finance/).
-
 
 The extension is an evolution of [this](https://github.com/JairoFra/rai-auto-converter-chrome-extension) previous project. It has been developed in pure JS, without external dependencies, and following the [Chrome Developers best practices](https://developer.chrome.com/docs/webstore/best_practices/), which include using the latest [Manifest V3](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/). 
 
@@ -107,6 +103,16 @@ The conversion rate is continuously updated in order to offer an accurate conver
 
 #### Dark mode
 Toggle between light mode and dark mode interface.
+
+#### Price badge
+If selected, shows the current conversion for RAI to USD in the extension icon.
+
+
+## Extension icon
+<img src="/images/icon_16.png"> Conversion enabled
+<img src="/images/icon_16_disabled.png"> Conversion disabled
+<img src="/images/icon_16_blocked.png"> Conversion diabled for this website (blacklisted)
+
 
 ## Further developments
 New features to be added:

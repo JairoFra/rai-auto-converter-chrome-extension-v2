@@ -1,6 +1,6 @@
-let RAI = ' RAI';
-let storedData;
-let enabledCurrencies = [];
+var RAI = ' RAI';
+var storedData;
+var enabledCurrencies = [];
 
 
 /**

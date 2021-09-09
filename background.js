@@ -2,13 +2,15 @@ const initialData = {
   decimals: -1,
   refreshInterval: 300,
   enabled: true,
-  currencies: currencies
+  showBadge: true,
+  darkMode: false,
+  currencies: currencies,
+  blacklist: []
 }
 
-
-let storedData;
-let conversionInterval;
-let raiUsdConversion;
+var storedData = initialData;
+var conversionInterval;
+var raiUsdConversion;
 
 /**
  * Stores default initial data on extension intalled
@@ -29,14 +31,14 @@ chrome.storage.local.get('data', (res) => {
 
   if (res.data) {
     storedData = res.data;
-  } else {
-    storedData = initialData;
   }
 
   updateConversions();
   conversionInterval = setInterval(async () => {
     updateConversions();
   }, storedData.refreshInterval * 1000);
+
+  updateIcon();
 });
 
 
@@ -44,7 +46,8 @@ chrome.storage.local.get('data', (res) => {
  * Runs foreground script on page loaded
  */
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && /^(http|file)/.test(tab.url)) {    
+  if (changeInfo.status !== 'complete' && /^(http|file)/.test(tab.url) 
+      && !storedData.blacklist.includes(new URL(tab.url).hostname)) {
     chrome.scripting.executeScript({
       target: { tabId: tabId },
       files: ['./foreground.js']
@@ -55,12 +58,37 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 
 /**
+ * Listens to changes in active tab
+ */
+chrome.tabs.onActivated.addListener(activeInfo => {
+  updateIcon();
+});
+
+
+/**
+ * Sets background color for price badge
+ */
+chrome.action.setBadgeBackgroundColor(
+  { color: '#19898a'}
+);
+
+/**
  * Listens to stored data updates sent from the popup and options
  */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case 'enabled': 
       storedData.enabled = message.value;
+      updateIcon();
+      break;
+
+    case 'showBadge':
+      storedData.showBadge = message.value;
+      if (!storedData.showBadge) {
+        chrome.action.setBadgeText({ text: '' });
+      } else {
+        chrome.action.setBadgeText({ text: Number(raiUsdConversion).toFixed(2) });
+      }
       break;
 
     case 'interval': 
@@ -77,6 +105,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     case 'currencies': 
       storedData.currencies = message.value;
+      break;
+
+    case 'blacklist': 
+      storedData.blacklist = message.value;
+      updateIcon()
       break;
   }
 
@@ -100,10 +133,14 @@ async function updateConversions() {
       let currency = storedData.currencies.find(c => c.id == id);
       currency.conversion = directConversions[id];
       
-      // Send new USD conversion to the popup
+      // Send new USD conversion to the popup and update badge
       if (id == 'usd') {
         raiUsdConversion = currency.conversion;
         chrome.runtime.sendMessage({ type: 'conversion', value: raiUsdConversion });
+
+        if (storedData.showBadge) {
+          chrome.action.setBadgeText({ text: Number(raiUsdConversion).toFixed(2) });
+        }
       }
     }
   }
@@ -163,7 +200,7 @@ async function getDirectConversions() {
  * Gets current market prices form CoinGecko API 
  * https://www.coingecko.com/api/documentations/v3
  */
- async function getIndirectConversions() {
+async function getIndirectConversions() {
   let currencyList = '';
 
   const currencies = storedData.currencies.filter(currency => !currency.directConversion && currency.enabled);
@@ -187,4 +224,47 @@ async function getDirectConversions() {
   } else {
     return null;
   }
+}
+
+
+/**
+ * Updaes the icon of the extension accourding to the state
+ */
+function updateIcon() {
+  if (!storedData.enabled) {
+    chrome.action.setIcon({
+      path: {
+        16: "/images/icon_16_disabled.png",
+        32: "/images/icon_32_disabled.png",
+        48: "/images/icon_48_disabled.png",
+        128: "/images/icon_128_disabled.png"
+      }
+    });
+
+    return;
+  }
+
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    // TODO debug error tabs[0] undefined
+    const hostname = new URL(tabs[0].url).hostname;
+    if (storedData.blacklist.includes(hostname)) {
+      chrome.action.setIcon({
+        path: {
+          16: "/images/icon_16_blocked.png",
+          32: "/images/icon_32_blocked.png",
+          48: "/images/icon_48_blocked.png",
+          128: "/images/icon_128_blocked.png"
+        }
+      });
+    } else {
+      chrome.action.setIcon({
+        path: {
+          16: "/images/icon_16.png",
+          32: "/images/icon_32.png",
+          48: "/images/icon_48.png",
+          128: "/images/icon_128.png"
+        }
+      });
+    }
+  });
 }

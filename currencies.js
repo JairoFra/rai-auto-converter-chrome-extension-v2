@@ -14,7 +14,7 @@ const currencies = [
     id: 'eur',
     ticker: 'EUR',
     regExps: [
-      '(EUR|€UR|€|EURO|€UROS?|€UROS?)'
+      '(EUR|€UR|€|Euros?|€uros?)'
     ],
     enabled: true,
     fiat: true,
@@ -24,7 +24,7 @@ const currencies = [
     id: 'cny',
     ticker: 'CNY',
     regExps: [
-      '(CNY|CN¥|¥)'
+      '(CNY|CN¥|RMB|Yuan)'
     ],
     enabled: true,
     fiat: true,
@@ -34,7 +34,7 @@ const currencies = [
     id: 'jpy',
     ticker: 'JPY',
     regExps: [
-      '(JPY|円|¥|JP¥)'
+      '(JPY|¥|JP¥|Yen)'
     ],
     enabled: true,
     fiat: true,
@@ -44,7 +44,7 @@ const currencies = [
     id: 'gbp',
     ticker: 'GBP',
     regExps: [
-      '(GBP|£)'
+      '(GBP|£|Pounds?)'
     ],
     enabled: true,
     fiat: true,
@@ -54,7 +54,7 @@ const currencies = [
     id: 'krw',
     ticker: 'KRW',
     regExps: [
-      '(KRW|₩)'
+      '(KRW|₩|Won)'
     ],
     enabled: true,
     fiat: true,
@@ -64,7 +64,7 @@ const currencies = [
     id: 'inr',
     ticker: 'INR',
     regExps: [
-      '(INR|₹)'
+      '(INR|₹|Rupees?)'
     ],
     enabled: true,
     fiat: true,
@@ -75,7 +75,7 @@ const currencies = [
     id: 'bch',
     ticker: 'BCH',
     regExps: [
-      'BCH|Bitcoin cash'
+      'BCH'
     ],
     enabled: true,
     fiat: false,
@@ -123,7 +123,7 @@ const currencies = [
   },
   {
     id: 'link',
-    ticker: 'link',
+    ticker: 'LINK',
     regExps: [
       'LINK'
     ],
@@ -135,7 +135,7 @@ const currencies = [
     id: 'ltc',
     ticker: 'LTC',
     regExps: [
-      'LTC|Litecoin'
+      'LTC'
     ],
     enabled: true,
     fiat: false,

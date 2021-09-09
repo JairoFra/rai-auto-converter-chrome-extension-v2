@@ -1,8 +1,9 @@
-let storedData;
+var storedData;
 
 const raiPriceEl = document.getElementById('raiPrice');
 const enabledInput = document.getElementById('enabledPop');
 const optionsBtn = document.getElementById('optionsBtn');
+const blacklistBtn = document.getElementById('blacklistBtn');
 const reflexerBtn = document.getElementById('reflexerPop');
 
 
@@ -71,6 +72,43 @@ enabledInput.addEventListener('change', e => {
  */
 optionsBtn.addEventListener('click', e => {
   chrome.runtime.openOptionsPage();
+});
+
+
+/**
+ * Adds domain to backlist when button is clicked
+ */
+blacklistBtn.addEventListener('click', e => {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    const hostname = new URL(tabs[0].url).hostname;
+    storedData.blacklist.push(hostname);
+
+    // Stores updated data
+    chrome.storage.local.set({ data: storedData });
+  
+    // Sends message to the background
+    chrome.runtime.sendMessage({ type: 'blacklist', value: storedData.blacklist });
+  });
+});
+
+
+/**
+ * Removes domain from backlist when button is clicked
+ */
+blacklistOffBtn.addEventListener('click', e => {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    const hostname = new URL(tabs[0].url).hostname;
+    const index = storedData.blacklist.indexOf(hostname);
+    if (index > -1) {
+      storedData.blacklist.splice(index, 1);
+
+      // Stores updated data
+      chrome.storage.local.set({ data: storedData });
+    
+      // Sends message to the background
+      chrome.runtime.sendMessage({ type: 'blacklist', value: storedData.blacklist });
+    }
+  });
 });
 
 

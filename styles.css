@@ -1,9 +1,12 @@
+@font-face {
+  font-family: 'RaiFont';
+  src: url('Rai-font.ttf')  format('truetype')
+}
+
 body {
   margin: 0;
   background-color: rgb(240, 240, 240);
   color: #2c2c2c;
-  transition-property: background-color, color;
-  transition-duration: 0.4s;
 }
 
 body.dark {
@@ -36,7 +39,7 @@ body.dark {
 }
 
 .popup .rai-img {
-  height: 30px;
+  height: 40px;
 }
 
 .popup .price {
@@ -61,6 +64,18 @@ body.dark {
   display: none;
 }
 
+.rai-font {
+  font-family: 'RaiFont', sans-serif;
+  font-size: 40px;
+  color: #24c7a7;
+  display: inline-block;
+  transform: scale(1,1.2);
+  letter-spacing: 2px;
+}
+
+.popup .title {
+  font-size: 40px;
+}
 /*
 
 .popup .title {
@@ -214,4 +229,9 @@ input:checked + .slider:before {
   background-size: 12px;
   background-position-x: 2px;
   background-position-y: 1px;
+}
+
+.icon {
+  height: 16px;
+  cursor: pointer;
 }
