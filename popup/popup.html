@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../main/styles.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="main popup">
+      <div id="optionsBtn-container">
+        <img src="../assets/images/gear-green-1.png" class="clickable" id="optionsBtn">
+      </div>
+      <div>
+        <span class="title rai-font">RAI</span>
+      </div>
+      <div>
+        <img class="logo-img" src="../assets/images/rai-logo-coin.png">
+      </div>
+      <div class="price rai-font">
+        <span>$</span><span id="raiPrice">?</span>
+      </div>
+      <div class="slide checked">	
+        <input type="checkbox" value="none" class="hidden" id="enabledPop" name="check" checked>
+        <label for="enabledPop"></label>
+      </div>
+      <div>
+        <a class="button clickable" id="blacklistBtn">
+          <img src="../assets/images/stop.png"> Stop for this website
+        </a>
+      </div>
+      <div id="reflexerPop" class="clickable">
+        <img class="dark-logo" src="../assets/images/reflexer.svg">
+        <img class="light-logo" src="../assets/images/reflexer-white.svg">
+      </div>
+    </div>
+  </body>
+
+  <script src="popup.js"></script>
+</html>

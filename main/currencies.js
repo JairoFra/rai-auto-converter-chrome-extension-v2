@@ -4,7 +4,7 @@ const currencies = [
     id: 'usd',
     ticker: 'USD',
     regExps: [
-      '(USD|U.S.D.|US\\s?\\$|U.S.\\s?\\$|\\$)'
+      'USD|U.S.D.|US\\s?\\$|U.S.\\s?\\$|\\$'
     ],
     enabled: true,
     fiat: true,
@@ -14,7 +14,7 @@ const currencies = [
     id: 'eur',
     ticker: 'EUR',
     regExps: [
-      '(EUR|€UR|€|Euros?|€uros?)'
+      'EUR|€UR|€|Euros?|€uros?'
     ],
     enabled: true,
     fiat: true,
@@ -24,7 +24,7 @@ const currencies = [
     id: 'cny',
     ticker: 'CNY',
     regExps: [
-      '(CNY|CN¥|RMB|Yuan)'
+      'CNY|CN¥|RMB|Yuan'
     ],
     enabled: true,
     fiat: true,
@@ -34,7 +34,7 @@ const currencies = [
     id: 'jpy',
     ticker: 'JPY',
     regExps: [
-      '(JPY|¥|JP¥|Yen)'
+      'JPY|¥|JP¥|Yen'
     ],
     enabled: true,
     fiat: true,
@@ -44,7 +44,7 @@ const currencies = [
     id: 'gbp',
     ticker: 'GBP',
     regExps: [
-      '(GBP|£|Pounds?)'
+      'GBP|£|Pounds?'
     ],
     enabled: true,
     fiat: true,
@@ -54,7 +54,7 @@ const currencies = [
     id: 'krw',
     ticker: 'KRW',
     regExps: [
-      '(KRW|₩|Won)'
+      'KRW|₩|Won'
     ],
     enabled: true,
     fiat: true,
@@ -64,7 +64,7 @@ const currencies = [
     id: 'inr',
     ticker: 'INR',
     regExps: [
-      '(INR|₹|Rupees?)'
+      'INR|₹|Rupees?'
     ],
     enabled: true,
     fiat: true,

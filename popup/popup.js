@@ -20,6 +20,7 @@ chrome.storage.local.get('data', (res) => {
   const dollar = storedData.currencies.find(currency => currency.id == 'usd');
   raiPriceEl.textContent = Number(dollar.conversion).toFixed(2);
   enabledInput.checked = storedData.enabled;
+  enabledInput.parentElement.classList = storedData.enabled ? 'slide checked' : 'slide';
 
   if (storedData.darkMode) {
     document.body.classList.add('dark');
@@ -38,10 +39,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       raiPriceEl.textContent = Number(message.value).toFixed(2);
       break;
 
-    case 'enabled': 
-      enabledInput.checked = message.value;
-      break;
-
     case 'darkMode': 
       if (message.value) {
         document.body.classList.add('dark');
@@ -58,6 +55,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
  */
 enabledInput.addEventListener('change', e => {
   storedData.enabled = e.target.checked;
+  enabledInput.parentElement.classList = storedData.enabled ? 'slide checked' : 'slide';
 
   // Stores updated data
   chrome.storage.local.set({ data: storedData });
@@ -80,6 +78,10 @@ optionsBtn.addEventListener('click', e => {
  */
 blacklistBtn.addEventListener('click', e => {
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    if (!tabs[0] || !tabs[0].url) {
+      return;
+    }
+    
     const hostname = new URL(tabs[0].url).hostname;
     storedData.blacklist.push(hostname);
 
@@ -95,21 +97,25 @@ blacklistBtn.addEventListener('click', e => {
 /**
  * Removes domain from backlist when button is clicked
  */
-blacklistOffBtn.addEventListener('click', e => {
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    const hostname = new URL(tabs[0].url).hostname;
-    const index = storedData.blacklist.indexOf(hostname);
-    if (index > -1) {
-      storedData.blacklist.splice(index, 1);
+// blacklistOffBtn.addEventListener('click', e => {
+//   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+//     if (!tabs[0] || !tabs[0].url) {
+//       return;
+//     }
 
-      // Stores updated data
-      chrome.storage.local.set({ data: storedData });
+//     const hostname = new URL(tabs[0].url).hostname;
+//     const index = storedData.blacklist.indexOf(hostname);
+//     if (index > -1) {
+//       storedData.blacklist.splice(index, 1);
+
+//       // Stores updated data
+//       chrome.storage.local.set({ data: storedData });
     
-      // Sends message to the background
-      chrome.runtime.sendMessage({ type: 'blacklist', value: storedData.blacklist });
-    }
-  });
-});
+//       // Sends message to the background
+//       chrome.runtime.sendMessage({ type: 'blacklist', value: storedData.blacklist });
+//     }
+//   });
+// });
 
 
 /**

@@ -7,7 +7,6 @@ const maxInterval = 3600;
 
 const decimalsInput = document.getElementById('decimals');
 const intervalInput = document.getElementById('interval');
-const enabledInput = document.getElementById('enabledOpt');
 const darkModeInput = document.getElementById('darkMode');
 const showBadgeInput = document.getElementById('showBadgeOpt');
 const priceTypeInput = document.getElementById('priceType');
@@ -32,22 +31,11 @@ chrome.storage.local.get('data', (res) => {
 
   decimalsInput.value = storedData.decimals;
   intervalInput.value = storedData.refreshInterval;
-  enabledInput.checked = storedData.enabled;
   darkModeInput.checked = storedData.darkMode;
   showBadgeInput.checked = storedData.showBadge;
 
   if (storedData.darkMode) {
     document.body.classList.add('dark');
-  }
-});
-
-
-/**
- * Listens to updates sent from popup
- */
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type && message.type == 'enabled') {
-    enabledInput.checked = message.value;
   }
 });
 
@@ -86,11 +74,19 @@ let intervalChanges = e => {
   let value = e.target.value;
 
   if (value < minInterval) {
-    value = minInterval;
-    intervalInput.value = value;
+    if (e.type = 'change') {
+      value = minInterval;
+      decimalsInput.value = value;
+    } else {
+      return;
+    }
   } else if (value > maxInterval) {
-    value = maxInterval;
-    intervalInput.value = value;
+    if (e.type = 'change') {
+      value = maxInterval;
+      decimalsInput.value = value;
+    } else {
+      return;
+    }
   }
 
   storedData.refreshInterval = value;
@@ -104,20 +100,6 @@ let intervalChanges = e => {
 
 intervalInput.addEventListener('change', intervalChanges);
 intervalInput.addEventListener('keyup', intervalChanges);
-
-
-/**
- * Manages changes in enabled switch
- */
-enabledInput.addEventListener('change', e => {
-  storedData.enabled = e.target.checked;
-
-  // Updates preferences
-  chrome.storage.local.set({ data: storedData });
-
-  // Sends message to the background and popup
-  chrome.runtime.sendMessage({ type: 'enabled', value: storedData.enabled });
-});
 
 
 /**
@@ -162,6 +144,10 @@ function renderCurrencyOptions() {
   let cryptoContainer = document.getElementById('cryptoCurrencies');
 
   storedData.currencies.forEach(currency => {
+    let container = document.createElement('label');
+    container.classList = 'checkbox-container';
+    container.innerText = currency.ticker;
+
     let checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.name = currency.id;
@@ -169,16 +155,16 @@ function renderCurrencyOptions() {
     checkbox.id = currency.id;
     checkbox.checked = currency.enabled;  
 
-    let label = document.createElement('label');
-    label.htmlFor = 'id';
-    label.appendChild(document.createTextNode(currency.ticker));
+    let checkmark = document.createElement('span');
+    checkmark.classList = 'checkmark';
+
+    container.appendChild(checkbox);
+    container.appendChild(checkmark);
 
     if (currency.fiat) {
-      fiatContainer.appendChild(checkbox);
-      fiatContainer.appendChild(label);
+      fiatContainer.appendChild(container);
     } else {
-      cryptoContainer.appendChild(checkbox);
-      cryptoContainer.appendChild(label);
+      cryptoContainer.appendChild(container);
     }
   });
 
@@ -271,7 +257,7 @@ function renderBlacklist() {
     span.innerText = hostname;
 
     let removeImg = document.createElement('img');
-    removeImg.src = './images/delete.png';
+    removeImg.src = '../assets/images/delete.png';
     removeImg.classList = 'icon';
 
     div.appendChild(span);
@@ -280,7 +266,7 @@ function renderBlacklist() {
     blacklistContainer.appendChild(div);
   });
 
-  startCurrencyListeners();
+  startBlacklistListeners();
 }
 
 
@@ -288,7 +274,7 @@ function renderBlacklist() {
  * Starts listeners for blacklist items
  * They cannot be started until they have been rendered
  */
-function startCurrencyListeners() {
+function startBlacklistListeners() {
   const blacklistButtons = document.getElementById('blacklist').querySelectorAll('img');
 
   blacklistButtons.forEach(element => {

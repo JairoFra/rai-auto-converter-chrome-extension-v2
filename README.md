@@ -1,7 +1,7 @@
 # RAI Auto-Converter
 
 <p align="center">
-<img style="text-align: center;" src="/images/icon128.png">
+<img style="text-align: center;" src="/assets/icons/icon128.png">
 </p>
 
 Extension for Chromium based browsers to automatically convert different currencies to [RAI](https://reflexer.finance/).
@@ -61,10 +61,10 @@ It detects amount and symbol in different nodes. This includes:
 * Amount present at right or left of the symbol (depending on the validity of the format)
 
 
-![screenshot1](/screenshots/screenshot1.gif)
+![screenshot1](/assets/screenshots/screenshot1.gif)
 
 ### Detection of new nodes and changes in existing nodes
-![screenshot2](/screenshots/screenshot2.gif)
+![screenshot2](/assets/screenshots/screenshot2.gif)
 
 ### Ability to enable and disable transformation in real time
 Enabling the automatic transformation will transform the current prices from USD to RAI without the need of refreshing the page.
@@ -109,9 +109,20 @@ If selected, shows the current conversion for RAI to USD in the extension icon.
 
 
 ## Extension icon
-<img src="/images/icon_16.png"> Conversion enabled
-<img src="/images/icon_16_disabled.png"> Conversion disabled
-<img src="/images/icon_16_blocked.png"> Conversion diabled for this website (blacklisted)
+<table>
+  <tr>
+    <th><img src="/assets/icons/icon_32.png"></th>
+    <td>Conversion enabled</td>
+  </tr>
+  <tr>
+    <td><img src="/assets/icons/icon_32_disabled.png"></td>
+    <td>Conversion disabled</td>
+  </tr>
+  <tr>
+    <td><img src="/assets/icons/icon_32_blocked.png"></td>
+    <td>Conversion diabled for this website (blacklisted)</td>
+  </tr>
+</table>
 
 
 ## Further developments

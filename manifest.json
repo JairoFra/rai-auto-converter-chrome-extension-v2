@@ -4,24 +4,24 @@
   "version": "2.0.0",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background-loader.js"
+    "service_worker": "/main/background-loader.js"
   },
   "permissions": ["storage", "tabs", "scripting"],
   "host_permissions": ["<all_urls>"],
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "/popup/popup.html",
     "default_icon": {
-      "16": "/images/icon_16.png",
-      "32": "/images/icon_32.png",
-      "48": "/images/icon_48.png",
-      "128": "/images/icon_128.png"
+      "16": "/assets/icons/icon_16.png",
+      "32": "/assets/icons/icon_32.png",
+      "48": "/assets/icons/icon_48.png",
+      "128": "/assets/icons/icon_128.png"
     }
   },
   "icons": {
-    "16": "/images/icon16.png",
-    "32": "/images/icon32.png",
-    "48": "/images/icon48.png",
-    "128": "/images/icon128.png"
+    "16": "/assets/icons/icon16.png",
+    "32": "/assets/icons/icon32.png",
+    "48": "/assets/icons/icon48.png",
+    "128": "/assets/icons/icon128.png"
   },
-  "options_page": "options.html"
+  "options_page": "/options/options.html"
 }

@@ -50,7 +50,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       && !storedData.blacklist.includes(new URL(tab.url).hostname)) {
     chrome.scripting.executeScript({
       target: { tabId: tabId },
-      files: ['./foreground.js']
+      files: ['/main/foreground.js']
     })
     .catch(err => console.log(err)); 
   }
@@ -87,7 +87,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (!storedData.showBadge) {
         chrome.action.setBadgeText({ text: '' });
       } else {
-        chrome.action.setBadgeText({ text: Number(raiUsdConversion).toFixed(2) });
+        chrome.action.setBadgeText({ text: '$' + Number(raiUsdConversion).toFixed(2) });
       }
       break;
 
@@ -139,7 +139,7 @@ async function updateConversions() {
         chrome.runtime.sendMessage({ type: 'conversion', value: raiUsdConversion });
 
         if (storedData.showBadge) {
-          chrome.action.setBadgeText({ text: Number(raiUsdConversion).toFixed(2) });
+          chrome.action.setBadgeText({ text: '$' + Number(raiUsdConversion).toFixed(2) });
         }
       }
     }
@@ -171,24 +171,19 @@ async function updateConversions() {
  * https://www.coingecko.com/api/documentations/v3
  */
 async function getDirectConversions() {
-  let currencyList = '';
+  let currencyList = 'usd,';
 
-  const currencies = storedData.currencies.filter(currency => currency.directConversion && currency.enabled);
-
-  if (!currencies.length) {
-    currencyList = 'usd';
-  } else {
-    currencies.forEach(currency => currencyList += (currency.id + ','));
-  }
-
-  const response = await fetch(
-    'https://api.coingecko.com/api/v3/simple/price?ids=rai&vs_currencies=' + currencyList)
+  const currencies = storedData.currencies.filter(
+    currency => currency.directConversion && currency.enabled && currency.id != 'usd');
+  currencies.forEach(currency => currencyList += (currency.id + ','));
+  
+  const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=rai&vs_currencies=' + currencyList)
   .catch(err => { 
     console.log(err);
     return null;
   });
 
-  if (response.ok) {
+  if (response && response.ok) {
     const json = await response.json();
     return json.rai ? json.rai : null;
   } else {
@@ -211,14 +206,13 @@ async function getIndirectConversions() {
   
   currencies.forEach(currency => currencyList += (currency.id + ','));
 
-  const response = await fetch(
-    'https://api.coingecko.com/api/v3/simple/price?ids=' + currencyList + '&vs_currencies=usd')
+  const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=' + currencyList + '&vs_currencies=usd')
   .catch(err => { 
     console.log(err);
     return null;
   });
 
-  if (response.ok) {
+  if (response && response.ok) {
     const json = await response.json();
     return json;
   } else {
@@ -234,10 +228,10 @@ function updateIcon() {
   if (!storedData.enabled) {
     chrome.action.setIcon({
       path: {
-        16: "/images/icon_16_disabled.png",
-        32: "/images/icon_32_disabled.png",
-        48: "/images/icon_48_disabled.png",
-        128: "/images/icon_128_disabled.png"
+        16: "/assets/icons/icon_16_disabled.png",
+        32: "/assets/icons/icon_32_disabled.png",
+        48: "/assets/icons/icon_48_disabled.png",
+        128: "/assets/icons/icon_128_disabled.png"
       }
     });
 
@@ -245,24 +239,27 @@ function updateIcon() {
   }
 
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    // TODO debug error tabs[0] undefined
+    if (!tabs[0] || !tabs[0].url) {
+      return;
+    }
+
     const hostname = new URL(tabs[0].url).hostname;
     if (storedData.blacklist.includes(hostname)) {
       chrome.action.setIcon({
         path: {
-          16: "/images/icon_16_blocked.png",
-          32: "/images/icon_32_blocked.png",
-          48: "/images/icon_48_blocked.png",
-          128: "/images/icon_128_blocked.png"
+          16: "/assets/icons/icon_16_blocked.png",
+          32: "/assets/icons/icon_32_blocked.png",
+          48: "/assets/icons/icon_48_blocked.png",
+          128: "/assets/icons/icon_128_blocked.png"
         }
       });
     } else {
       chrome.action.setIcon({
         path: {
-          16: "/images/icon_16.png",
-          32: "/images/icon_32.png",
-          48: "/images/icon_48.png",
-          128: "/images/icon_128.png"
+          16: "/assets/icons/icon_16.png",
+          32: "/assets/icons/icon_32.png",
+          48: "/assets/icons/icon_48.png",
+          128: "/assets/icons/icon_128.png"
         }
       });
     }
