@@ -124,11 +124,21 @@ If selected, shows the current conversion for RAI to USD in the extension icon.
   </tr>
 </table>
 
+<table>
+  <tr>
+    <td><img src="/assets/screenshots/badge-on.png"></td>
+    <td>Price badge enbled</td>
+  </tr>
+  <tr>
+    <td><img src="/assets/screenshots/badge-off.png"></td>
+    <td>Price badge disabled</td>
+  </tr>
+</table>
+
 
 ## Further developments
 New features to be added:
 * Expand the number of currencies supported
-* Blacklisting URLs
 * New proposals from the [Reflexer Labs](https://reflexer.finance/) community
 
 

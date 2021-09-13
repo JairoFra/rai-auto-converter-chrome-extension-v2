@@ -258,7 +258,7 @@ function renderBlacklist() {
 
     let removeImg = document.createElement('img');
     removeImg.src = '../assets/images/delete.png';
-    removeImg.classList = 'icon';
+    removeImg.classList = 'clickable';
 
     div.appendChild(span);
     div.appendChild(removeImg);
@@ -294,11 +294,3 @@ function startBlacklistListeners() {
     });
   });
 }
-
-
-
-
-// TODO remove
-document.getElementById('test1').addEventListener('click', e => {
-
-});

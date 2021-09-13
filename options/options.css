@@ -7,10 +7,16 @@
   background-image: url("../assets/images/bg-dark.png");
 }
 
-.options .main {
-  min-height: 100vh;
+.main- {
   max-width: 900px;
   margin: auto;
+}
+
+.options .main {
+  /* min-height: 100vh;
+  max-width: 900px; */
+  border-radius: 30px;
+  margin: 10px;
   padding: 30px 50px;
   box-shadow: 0px 0px 26px -7px #858585bf;
 }
@@ -69,10 +75,9 @@ input::-webkit-inner-spin-button {
   display: inline-block;
   position: relative;
   padding-left: 20px;
-  padding-right: 10px;
+  padding-right: 15px;
   margin-bottom: 10px;
   cursor: pointer;
-  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -86,7 +91,7 @@ input::-webkit-inner-spin-button {
 
 .checkmark {
   position: absolute;
-  top: 0;
+  top: 1px;
   left: 0;
   height: 16px;
   width: 16px;
@@ -119,4 +124,9 @@ input::-webkit-inner-spin-button {
   border: solid white;
   border-width: 0 3px 3px 0;
   transform: rotate(45deg);
+}
+
+h3 {
+  display: inline-block;
+  margin-right: 15px;
 }

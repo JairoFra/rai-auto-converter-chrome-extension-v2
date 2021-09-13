@@ -4,7 +4,8 @@ const currencies = [
     id: 'usd',
     ticker: 'USD',
     regExps: [
-      'USD|U.S.D.|US\\s?\\$|U.S.\\s?\\$|\\$'
+      'USD|U.S.D.|US\\s?\\$|U.S.\\s?\\$|\\$US|\\$U.S.|\\$',
+      '(U\\.?S\\.?\\s*)?Dollar[s]?'
     ],
     enabled: true,
     fiat: true,
@@ -14,27 +15,8 @@ const currencies = [
     id: 'eur',
     ticker: 'EUR',
     regExps: [
-      'EUR|€UR|€|Euros?|€uros?'
-    ],
-    enabled: true,
-    fiat: true,
-    directConversion: true
-  },
-  {
-    id: 'cny',
-    ticker: 'CNY',
-    regExps: [
-      'CNY|CN¥|RMB|Yuan'
-    ],
-    enabled: true,
-    fiat: true,
-    directConversion: true
-  },
-  {
-    id: 'jpy',
-    ticker: 'JPY',
-    regExps: [
-      'JPY|¥|JP¥|Yen'
+      'EUR|€UR|€',
+      'Euros?|€uros?'
     ],
     enabled: true,
     fiat: true,
@@ -44,7 +26,30 @@ const currencies = [
     id: 'gbp',
     ticker: 'GBP',
     regExps: [
-      'GBP|£|Pounds?'
+      'GBP|G.B.P.?|£',
+      'Pounds?'
+    ],
+    enabled: true,
+    fiat: true,
+    directConversion: true
+  },
+  {
+    id: 'jpy',
+    ticker: 'JPY',
+    regExps: [
+      'JPY|¥|JP¥|円',
+      'Yens?'
+    ],
+    enabled: true,
+    fiat: true,
+    directConversion: true
+  },
+  {
+    id: 'cny',
+    ticker: 'CNY',
+    regExps: [
+      'CNY|CN¥|RMB|元',
+      'Yuans?'
     ],
     enabled: true,
     fiat: true,
@@ -54,7 +59,8 @@ const currencies = [
     id: 'krw',
     ticker: 'KRW',
     regExps: [
-      'KRW|₩|Won'
+      'KRW|₩',
+      'Wons?'
     ],
     enabled: true,
     fiat: true,
@@ -64,7 +70,8 @@ const currencies = [
     id: 'inr',
     ticker: 'INR',
     regExps: [
-      'INR|₹|Rupees?'
+      'INR|₹',
+      'Rupees?'
     ],
     enabled: true,
     fiat: true,
@@ -95,7 +102,8 @@ const currencies = [
     id: 'btc',
     ticker: 'BTC',
     regExps: [
-      'BTC|Bitcoins?|₿'
+      'BTC|₿',
+      'Bitcoins?'
     ],
     enabled: true,
     fiat: false,
@@ -115,7 +123,8 @@ const currencies = [
     id: 'eth',
     ticker: 'ETH',
     regExps: [
-      'ETH|Ether'
+      'ETH',
+      'Ether'
     ],
     enabled: true,
     fiat: false,
@@ -186,7 +195,8 @@ const currencies = [
     id: 'dogecoin',
     ticker: 'DOGE',
     regExps: [
-      'DOGE'
+      'DOGE|Ð',
+      'Dogecoins?'
     ],
     enabled: true,
     fiat: false,

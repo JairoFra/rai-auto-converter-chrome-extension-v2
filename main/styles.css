@@ -7,6 +7,7 @@ body {
   margin: 0;
   background-color: #e4e4e4;
   color: #2c2c2c;
+  font-size: 14px;
 }
 
 body.dark {
@@ -54,10 +55,6 @@ button, input, select {
   font-family: inherit;
 }
 
-.icon {
-  height: 16px;
-}
-
 .button {
   display: inline-block;
   padding: 0.3em 1.2em;
@@ -73,6 +70,13 @@ button, input, select {
 
 .button:hover{
   background-color:#24c7a7;
+  cursor: pointer;
+}
+
+.btn-sm {
+  display: inline-block;
+  padding: 0.07em 0.8em;
+  margin-right: 0.5em;
 }
 
 .switch-container {

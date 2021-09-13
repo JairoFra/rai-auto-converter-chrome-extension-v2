@@ -1,8 +1,6 @@
-var RAI = ' RAI';
-var storedData;
-var enabledCurrencies = [];
-
-const amounAbbreviations = ['K', 'M', 'B', 'T']; // TODO
+RAI = ' RAI';
+storedData = {};
+enabledCurrencies = [];
 
 /**
  * Gets stored data
@@ -40,7 +38,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 /**
  * Observer to check for changes in the DOM
  */
-const observer = new MutationObserver(mutations => {
+observer = new MutationObserver(mutations => {
   mutations.forEach(function(mutation) {
     if (mutation.type === 'characterData') {
       searchCurrencies(mutation.target.parentNode);
@@ -73,9 +71,9 @@ function disconnectObserver() {
 }
 
 
-const avoidedTags = ['html', 'head', 'script', 'noscript', 'style', 'img', 'textarea', 'input','audio', 'video'];
-const regExpAmount = '-?\\d+(?:\\.\\d+)?(?:,\\d+(?:\\.\\d+)?)*';
-
+avoidedTags = ['html', 'head', 'script', 'noscript', 'style', 'img', 'textarea', 'input','audio', 'video'];
+regExpAmount = '-?\\d+(?:\\.\\d+)?(?:,\\d+(?:\\.\\d+)?)*';
+regExpAmountAbbrev = '(\\s?(K|M|million|B|billion|T|trillion)\\b)';
 
 /**
  * Calls search in nodes for every enabled currency
@@ -91,46 +89,45 @@ function searchCurrencies(rootNode) {
  * Searches nodes for a currency symbol
  */
 function searchCurrency(rootNode, currency) {
-  //const baseRegExpShortDollar = '(USD|U.S.D.|US\\s?\\$|U.S.\\s?\\$|\\$)';
-  // TODO change
-  const baseRegExpShortDollar = '(' + currency.regExps[0] + ')';
-
-  const avoidedChars = '[a-zA-Z0-9\$]';
-  const regExpPriceJoined =  '(?<!' + avoidedChars + ')(' + regExpAmount + '(' + baseRegExpShortDollar + '(?!' + avoidedChars + ')))|(((?<!' + avoidedChars + ')' + baseRegExpShortDollar + ')' + regExpAmount + ')(?!' + avoidedChars + ')'; // Amount and currency without space
-  const regExpDollarShort = '(?<!' + avoidedChars + ')' + baseRegExpShortDollar + '(?!' + avoidedChars + ')'; // Currency (amount can be at left or right)
-  const regExpDollarLong = '((^|(?<=\\s))((U\\.?S\\.?\\s*)?Dollar[s]?)\\b)'; // Currency (amount can be at left)
+  const avoidedChars = '[a-zA-Z0-9\$€¥£₩₹₿]';
+  const regExpPriceJoined =  '(?<!' + avoidedChars + ')(' + regExpAmount + '((' + currency.regExps[0] + ')(?!' + avoidedChars + ')))|(((?<!' + avoidedChars + ')(' + currency.regExps[0] + '))' + regExpAmount + regExpAmountAbbrev + '?)(?!' + avoidedChars + ')'; // Amount and currency without space
+  const regExpCurrencyShort = '(?<!' + avoidedChars + ')(' + currency.regExps[0] + ')(?!' + avoidedChars + ')'; // Currency (amount can be at left or right)
+  let regExpCurrencyLong = null;
+  if (currency.regExps.length > 1) {
+    regExpCurrencyLong = '((^|(?<=\\s))(' + currency.regExps[1] + ')\\b)'; // Currency (amount can be at left)
+  }
 
   const treeWalker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT);
 
   while (treeWalker.nextNode()) {
     const node = treeWalker.currentNode;
     if (!avoidedTags.includes(node.parentNode.tagName.toLowerCase())) {
-      if (new RegExp(regExpPriceJoined, 'gi').test(node.nodeValue)) { 
+      if (new RegExp(regExpPriceJoined, 'gi').test(node.nodeValue)) {
         // Amount and currency without space found (e.g. 11.1USD - $22)
-        convertPrice(node, new RegExp(regExpPriceJoined, 'gi'), regExpAmount, currency.conversion);
-      } else if (new RegExp(regExpDollarShort, 'gi').test(node.nodeValue)) {
+        convertPrice(node, new RegExp(regExpPriceJoined, 'gi'), currency.conversion);
+      } else if (new RegExp(regExpCurrencyShort, 'gi').test(node.nodeValue)) {
         // Currency found --> search amount left and right
-        const regExpPriceLeft = new RegExp(regExpAmount + '\\s*' + regExpDollarShort, 'gi');
-        const regExpPriceRight = new RegExp(regExpDollarShort + '\\s*' + regExpAmount, 'gi');
+        const regExpPriceLeft = new RegExp(regExpAmount + regExpAmountAbbrev + '?\\s*' + regExpCurrencyShort, 'gi');
+        const regExpPriceRight = new RegExp(regExpCurrencyShort + '\\s*' + regExpAmount + regExpAmountAbbrev + '?', 'gi');
         if (regExpPriceLeft.test(node.nodeValue)) {
           // Amount found at left (e.g. 5.55 $)
-          convertPrice(node, regExpPriceLeft, regExpAmount, currency.conversion);
+          convertPrice(node, regExpPriceLeft, currency.conversion);
         } else if (regExpPriceRight.test(node.nodeValue)) {
           // Amount found at right (e.g. USD 66)
-          convertPrice(node, regExpPriceRight, regExpAmount, currency.conversion);
-        } else if (new RegExp('^(' + regExpDollarShort + '|' + regExpDollarShort + ')$', 'gi').test(node.nodeValue.trim())) {
+          convertPrice(node, regExpPriceRight, currency.conversion);
+        } else if (new RegExp('^(' + regExpCurrencyShort + '|' + regExpCurrencyShort + ')$', 'gi').test(node.nodeValue.trim())) {
           // Currency symbol isolated in node --> search amount in other nodes (e.g. <span>$</span><span>6.66</span>)
-          searchAmount(node, regExpDollarShort, true, currency.conversion);
+          searchAmount(node, regExpCurrencyShort, true, currency.conversion);
         }
-      } else if (new RegExp(regExpDollarLong, 'gi').test(node.nodeValue)) {
+      } else if (regExpCurrencyLong && new RegExp(regExpCurrencyLong, 'gi').test(node.nodeValue)) {
         // Currency found --> search amount left
-        const regExpPriceLeft = new RegExp(regExpAmount + '\\s*' + regExpDollarLong, 'gi');
+        const regExpPriceLeft = new RegExp(regExpAmount + regExpAmountAbbrev + '?\\s*' + regExpCurrencyLong, 'gi');
         if (regExpPriceLeft.test(node.nodeValue)) {
           // Amount found at left (e.g. 7.77 Dollars)
-          convertPrice(node, regExpPriceLeft, regExpAmount, currency.conversion);
-        } else if (new RegExp('^(' + regExpDollarLong + '|' + regExpDollarShort + ')$', 'gi').test(node.nodeValue.trim())) {
+          convertPrice(node, regExpPriceLeft, currency.conversion);
+        } else if (new RegExp('^(' + regExpCurrencyLong + '|' + regExpCurrencyShort + ')$', 'gi').test(node.nodeValue.trim())) {
           // Currency symbol isolated in node --> search amount in other nodes (e.g. <span>8</span><span>US Dollar</span>)
-          searchAmount(node, regExpDollarLong, false, currency.conversion);
+          searchAmount(node, regExpCurrencyLong, false, currency.conversion);
         }
       }
     }
@@ -149,7 +146,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
     // Search in 'uncle' right nodes
     const firstRightUncle = getNextSibling(currencyNode.parentNode);
     if (firstRightUncle && firstRightUncle.nodeType === currencyNode.TEXT_NODE && isAmount(firstRightUncle.nodeValue)) {
-      const raiAmount = currencyToRai(firstRightUncle.nodeValue.match(regExpAmount)[0], conversion);
+      const raiAmount = currencyToRai(firstRightUncle.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
       firstRightUncle.nodeValue = raiAmount + RAI;
       currencyNode.nodeValue = '';
       return;
@@ -162,7 +159,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
       currencyNode.nodeValue = '';
       
       if (containsDecimals(firstRightCousin.nodeValue)) {
-        const raiAmount = currencyToRai(firstRightCousin.nodeValue.match(regExpAmount)[0], conversion);
+        const raiAmount = currencyToRai(firstRightCousin.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
         firstRightCousin.nodeValue = raiAmount + RAI;
         return;
       }
@@ -189,7 +186,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
       currencyNode.nodeValue = '';
       
       if (containsDecimals(firstRightNephew.nodeValue)) {
-        const raiAmount = currencyToRai(firstRightNephew.nodeValue.match(regExpAmount)[0], conversion);
+        const raiAmount = currencyToRai(firstRightNephew.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
         firstRightNephew.nodeValue = raiAmount + RAI;
         return;
       }
@@ -216,7 +213,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
   const firstLeftUncle = getPrevSibling(currencyNode.parentNode);
 
   if (firstLeftUncle && firstLeftUncle.nodeType === currencyNode.TEXT_NODE && isAmount(firstLeftUncle.nodeValue)) {
-    const raiAmount = currencyToRai(firstLeftUncle.nodeValue.match(regExpAmount)[0], conversion);
+    const raiAmount = currencyToRai(firstLeftUncle.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
     firstLeftUncle.nodeValue = raiAmount;
     currencyNode.nodeValue = currencyNode.nodeValue.replace(new RegExp(regExpDollar, 'gi'), RAI);
     return;
@@ -229,7 +226,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
     currencyNode.nodeValue = currencyNode.nodeValue.replace(new RegExp(regExpDollar, 'gi'), RAI);
 
     if (containsDecimals(firstLeftCousin.nodeValue)) {
-      const raiAmount = currencyToRai(firstLeftCousin.nodeValue.match(regExpAmount)[0], conversion);
+      const raiAmount = currencyToRai(firstLeftCousin.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
       firstLeftCousin.nodeValue = raiAmount;
       return;
     }
@@ -246,7 +243,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
         secondLeftCousin.nodeValue = raiAmount.split('.')[0];
       }
     } else {
-      const raiAmount = currencyToRai(firstLeftCousin.nodeValue.match(regExpAmount)[0], conversion);
+      const raiAmount = currencyToRai(firstLeftCousin.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
       firstLeftCousin.nodeValue = raiAmount;
     }
     return;
@@ -260,7 +257,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
     currencyNode.nodeValue = currencyNode.nodeValue.replace(new RegExp(regExpDollar, 'gi'), RAI);
 
     if (containsDecimals(firstLeftNephew.nodeValue)) {
-      const raiAmount = currencyToRai(firstLeftNephew.nodeValue.match(regExpAmount)[0], conversion);
+      const raiAmount = currencyToRai(firstLeftNephew.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
       firstLeftNephew.nodeValue = raiAmount;
       return;
     }
@@ -277,7 +274,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
         secondLeftNephew.nodeValue = '';
       }
     } else {
-      const raiAmount = currencyToRai(firstLeftNephew.nodeValue.match(regExpAmount)[0], conversion);
+      const raiAmount = currencyToRai(firstLeftNephew.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
       firstLeftNephew.nodeValue = raiAmount;
     }
     return;
@@ -289,7 +286,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
  * Checks if value is a valid amount
  */
 function isAmount(value) {
-  return new RegExp(regExpAmount, 'gi').test(value);
+  return new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi').test(value);
 }
 
 
@@ -315,9 +312,9 @@ function containsDecimals(amount) {
 /**
  * Transforms price node
  */
-function convertPrice(node, regExpPrice, regExpAmount, conversion) {
+function convertPrice(node, regExpPrice, conversion) {
   node.nodeValue.match(regExpPrice).forEach(price => { 
-    const raiAmount = currencyToRai(price.match(regExpAmount)[0], conversion);
+    const raiAmount = currencyToRai(price.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gmi'))[0], conversion);
     node.nodeValue = node.nodeValue.replace(price, raiAmount + RAI);
   });
 }
@@ -327,6 +324,13 @@ function convertPrice(node, regExpPrice, regExpAmount, conversion) {
  * Converts amount to RAI
  */
 function currencyToRai(amountString, conversion) {
+  let amountAbbrev = amountString.match(new RegExp(regExpAmountAbbrev, 'gmi'));
+  if (amountAbbrev) {
+    amountString = amountString.replace(amountAbbrev, '');
+  } else {
+    amountAbbrev = '';
+  }
+
   const decimals = storedData.decimals < 0 ? numDecimals(amountString) : storedData.decimals;
   const amountNumber = Number(amountString.replace(/,/g, ''));
   const minToShow = 1 / Math.pow(10, decimals);
@@ -335,7 +339,8 @@ function currencyToRai(amountString, conversion) {
     const prev = raiNumber < 0 ? '>-' : '<';
     return prev + minToShow;
   } 
-  return raiNumber.toLocaleString('en-US', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })
+  
+  return raiNumber.toLocaleString(undefined, { maximumFractionDigits: decimals, minimumFractionDigits: decimals }) + amountAbbrev;
 }
 
 
