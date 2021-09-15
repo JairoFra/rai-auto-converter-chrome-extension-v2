@@ -15,11 +15,11 @@ body.dark {
   color: #e4e4e4;
 }
 
-.main {
+.card {
   background-color: white;
 }
 
-.dark .main {
+.dark .card {
   background-color: #363636;
 }
 
@@ -74,8 +74,7 @@ button, input, select {
 }
 
 .btn-sm {
-  display: inline-block;
-  padding: 0.07em 0.8em;
+  padding: 4px 10px 5px 10px;
   margin-right: 0.5em;
 }
 

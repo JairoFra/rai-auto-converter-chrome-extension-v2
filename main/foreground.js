@@ -72,7 +72,11 @@ function disconnectObserver() {
 
 
 avoidedTags = ['html', 'head', 'script', 'noscript', 'style', 'img', 'textarea', 'input','audio', 'video'];
-regExpAmount = '-?\\d+(?:\\.\\d+)?(?:,\\d+(?:\\.\\d+)?)*';
+// regExpAmount = '-?\\d+(?:\\.\\d+)?(?:,\\d+(?:\\.\\d+)?)*'; // TODO remove
+// regExpAmount = '-?((?:\\d{1,3},(?:\\d{3},)*\\d{3})(\\.\\d+)?|(?:\\d{1,3}\.(?:\\d{3}\\.)*\\d{3})(,\\d+)?|(?:\\d+)((\\.|,)\\d+)?)'; // TODO remove
+regExpAmount1 = '-?((?:\\d{1,3},(?:\\d{3},)*\\d{3})(\\.\\d+)?|(?:\\d+)(\\.\\d+)?)';
+regExpAmount2 = '-?((?:\\d{1,3}\.(?:\\d{3}\\.)*\\d{3})(,\\d+)?|(?:\\d+)(,\\d+)?)';
+regExpAmount = '(' + regExpAmount1 + '|' + regExpAmount2 + ')';
 regExpAmountAbbrev = '(\\s?(K|M|million|B|billion|T|trillion)\\b)';
 
 /**
@@ -331,8 +335,15 @@ function currencyToRai(amountString, conversion) {
     amountAbbrev = '';
   }
 
-  const decimals = storedData.decimals < 0 ? numDecimals(amountString) : storedData.decimals;
-  const amountNumber = Number(amountString.replace(/,/g, ''));
+  let thousandsSeparator = ',';
+  let decimalSeparator = '.';
+  if (!isEnglishNotation(amountString)) {
+    thousandsSeparator = '.';
+    decimalSeparator = ',';
+  }
+
+  const decimals = storedData.decimals < 0 ? numDecimals(amountString, decimalSeparator) : storedData.decimals;
+  const amountNumber = Number(amountString.replace(new RegExp(thousandsSeparator, 'g'), ''));
   const minToShow = 1 / Math.pow(10, decimals);
   const raiNumber = Number(amountNumber / conversion);
   if (Math.abs(raiNumber) > 0 && Math.abs(raiNumber) < minToShow) {
@@ -347,8 +358,8 @@ function currencyToRai(amountString, conversion) {
 /**
  * Gets number of decimals in amount string
  */
-function numDecimals(amountString) {
-  amountParts = amountString.split('.');
+function numDecimals(amountString, decimalSeparator) {
+  amountParts = amountString.split(decimalSeparator);
   return amountParts.length > 1 ? amountParts[1].length : 0;
 }
 
@@ -377,4 +388,13 @@ function getPrevSibling(node) {
   }
 
   return prevSibling;
+}
+
+
+/**
+* Returns true if the amount is in English notation (commas for thousands separators and dot for decimals)
+* and false if it is non-English notation (dots for thousands separators and comma for decimals)
+*/
+function isEnglishNotation(amountString) {
+  return new RegExp(regExpAmount1).test(amountString);
 }

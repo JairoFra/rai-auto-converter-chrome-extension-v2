@@ -7,37 +7,44 @@
   background-image: url("../assets/images/bg-dark.png");
 }
 
-.main- {
+.main {
   max-width: 900px;
   margin: auto;
 }
 
-.options .main {
-  /* min-height: 100vh;
-  max-width: 900px; */
+.options .card {
   border-radius: 30px;
-  margin: 10px;
+  margin: 20px;
   padding: 30px 50px;
   box-shadow: 0px 0px 26px -7px #858585bf;
 }
 
-.dark .options .main {
+.dark .options .card {
   box-shadow: 0px 0px 26px -7px #000000bf;
 }
 
-.header {
+.options .card-top {
+  border-radius: 0 0 30px 30px;
+  margin-top: 0;
+  padding-top: 15px;
   text-align: center;
 }
-
-.header img {
+  
+.options .card-top img {
   height: 70px;
   margin-right: 5px;
 }
 
-.header span {
+.options .card-top span {
   font-size: 50px;
   position: relative;
   bottom: 10px;
+}
+
+.options .card-bottom {
+  border-radius: 30px 30px 0 0;
+  margin-bottom: 0;
+  padding-top: 15px;
 }
 
 .input-group {
@@ -126,7 +133,26 @@ input::-webkit-inner-spin-button {
   transform: rotate(45deg);
 }
 
+h2 {
+  margin-top: 0;
+}
+
 h3 {
   display: inline-block;
   margin-right: 15px;
+}
+
+.blacklist-item {
+  margin-bottom: 6px;
+}
+
+.blacklist-item .icon {
+  position: relative;
+  top: 1px;
+  margin-right: 5px;
+  height: 14px;
+}
+
+#emptyBlacklist {
+  margin-bottom: 10px;
 }

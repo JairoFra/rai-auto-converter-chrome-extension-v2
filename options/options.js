@@ -249,19 +249,34 @@ function updateCurrencies() {
  */
 function renderBlacklist() {
   let blacklistContainer = document.getElementById('blacklist');
+
+  if (storedData.blacklist.length) {
+    let button = document.createElement('a');
+    button.id = 'emptyBlacklist';
+    button.classList = 'button btn-sm';
+    button.innerText = 'Empty blacklist';
+
+    blacklistContainer.appendChild(button);
+  } else {
+    let span = document.createElement('span');
+    span.innerText = 'There are no websites blacklisted.';
+
+    blacklistContainer.appendChild(span);
+  }
   
   storedData.blacklist.forEach(hostname => {
     let div = document.createElement('div');
+    div.classList = 'blacklist-item';
 
     let span = document.createElement('span');
     span.innerText = hostname;
 
     let removeImg = document.createElement('img');
     removeImg.src = '../assets/images/delete.png';
-    removeImg.classList = 'clickable';
+    removeImg.classList = 'clickable icon';
 
-    div.appendChild(span);
     div.appendChild(removeImg);
+    div.appendChild(span);
 
     blacklistContainer.appendChild(div);
   });
@@ -276,6 +291,7 @@ function renderBlacklist() {
  */
 function startBlacklistListeners() {
   const blacklistButtons = document.getElementById('blacklist').querySelectorAll('img');
+  const emptyBlacklist = document.getElementById('emptyBlacklist');
 
   blacklistButtons.forEach(element => {
     element.addEventListener('click', e => {
@@ -292,5 +308,30 @@ function startBlacklistListeners() {
       
       e.target.parentNode.remove();
     });
+  });
+
+  if (!emptyBlacklist) {
+    return;
+  }
+
+  emptyBlacklist.addEventListener('click', e => {
+    storedData.blacklist = [];
+
+    // Stores updated data
+    chrome.storage.local.set({ data: storedData });
+    
+    // Sends message to the background
+    chrome.runtime.sendMessage({ type: 'blacklist', value: storedData.blacklist });
+    
+    blacklistButtons.forEach(element => {
+      element.parentNode.remove();
+    })
+
+    emptyBlacklist.remove();
+
+    let blacklistContainer = document.getElementById('blacklist');
+    let span = document.createElement('span');
+    span.innerText = 'There are no websites blacklisted.';
+    blacklistContainer.appendChild(span);
   });
 }
