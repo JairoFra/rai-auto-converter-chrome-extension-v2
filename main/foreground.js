@@ -41,9 +41,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 observer = new MutationObserver(mutations => {
   mutations.forEach(function(mutation) {
     if (mutation.type === 'characterData') {
+      // if (mutation.target.nodeValue.includes('$')) {
+      //   debugger
+      // } // TODO
       searchCurrencies(mutation.target.parentNode);
     } else if (mutation.type === 'childList') {
       mutation.addedNodes.forEach(node => {
+        // if (node.nodeValue && node.nodeValue.includes('$')) {
+        //   debugger
+        // } // TODO
         searchCurrencies(node);
       });
     }
@@ -72,12 +78,15 @@ function disconnectObserver() {
 
 
 avoidedTags = ['html', 'head', 'script', 'noscript', 'style', 'img', 'textarea', 'input','audio', 'video'];
-// regExpAmount = '-?\\d+(?:\\.\\d+)?(?:,\\d+(?:\\.\\d+)?)*'; // TODO remove
-// regExpAmount = '-?((?:\\d{1,3},(?:\\d{3},)*\\d{3})(\\.\\d+)?|(?:\\d{1,3}\.(?:\\d{3}\\.)*\\d{3})(,\\d+)?|(?:\\d+)((\\.|,)\\d+)?)'; // TODO remove
-regExpAmount1 = '-?((?:\\d{1,3},(?:\\d{3},)*\\d{3})(\\.\\d+)?|(?:\\d+)(\\.\\d+)?)';
-regExpAmount2 = '-?((?:\\d{1,3}\.(?:\\d{3}\\.)*\\d{3})(,\\d+)?|(?:\\d+)(,\\d+)?)';
-regExpAmount = '(' + regExpAmount1 + '|' + regExpAmount2 + ')';
+regExpAmountThousandsComma = '(?:[1-9]\\d{0,2},(?:\\d{3},)*\\d{3})(\\.\\d+)?(?!\\d)'; // e.g. 1,000.11 (decimal part optional)
+regExpAmountThousandsDot = '(?:[1-9]\\d{0,2}\\.(?:\\d{3}\\.)*\\d{3})(,\\d+)?(?!\\d)'; // e.g. 1.000,11 (decimal part optional)
+regExpAmountDecimalDot = '(?:\\d+)(\\.\\d+)'; // e.g. 1000.11
+regExpAmountDecimalComma = '(?:\\d+)(,\\d+)'; // e.g. 1000,11
+regExpAmountNoSeparator = '\\d+'; // e.g. 1000
+
+regExpAmount = '(-?(' + regExpAmountThousandsComma + '|' + regExpAmountThousandsDot + '|' + regExpAmountDecimalDot + '|' + regExpAmountDecimalComma + '|' + regExpAmountNoSeparator + '))';
 regExpAmountAbbrev = '(\\s?(K|M|million|B|billion|T|trillion)\\b)';
+
 
 /**
  * Calls search in nodes for every enabled currency
@@ -103,9 +112,9 @@ function searchCurrency(rootNode, currency) {
 
   const treeWalker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT);
 
-  while (treeWalker.nextNode()) {
+  do {
     const node = treeWalker.currentNode;
-    if (!avoidedTags.includes(node.parentNode.tagName.toLowerCase())) {
+    if (!node.parentNode || !avoidedTags.includes(node.parentNode.tagName.toLowerCase())) {
       if (new RegExp(regExpPriceJoined, 'gi').test(node.nodeValue)) {
         // Amount and currency without space found (e.g. 11.1USD - $22)
         convertPrice(node, new RegExp(regExpPriceJoined, 'gi'), currency.conversion);
@@ -135,7 +144,7 @@ function searchCurrency(rootNode, currency) {
         }
       }
     }
-  }
+  } while (treeWalker.nextNode());
 }
 
 
@@ -150,7 +159,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
     // Search in 'uncle' right nodes
     const firstRightUncle = getNextSibling(currencyNode.parentNode);
     if (firstRightUncle && firstRightUncle.nodeType === currencyNode.TEXT_NODE && isAmount(firstRightUncle.nodeValue)) {
-      const raiAmount = currencyToRai(firstRightUncle.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
+      const raiAmount = currencyToRai(extractAmount(firstRightUncle.nodeValue), conversion);
       firstRightUncle.nodeValue = raiAmount + RAI;
       currencyNode.nodeValue = '';
       return;
@@ -163,7 +172,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
       currencyNode.nodeValue = '';
       
       if (containsDecimals(firstRightCousin.nodeValue)) {
-        const raiAmount = currencyToRai(firstRightCousin.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
+        const raiAmount = currencyToRai(extractAmount(firstRightCousin.nodeValue), conversion);
         firstRightCousin.nodeValue = raiAmount + RAI;
         return;
       }
@@ -190,7 +199,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
       currencyNode.nodeValue = '';
       
       if (containsDecimals(firstRightNephew.nodeValue)) {
-        const raiAmount = currencyToRai(firstRightNephew.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
+        const raiAmount = currencyToRai(extractAmount(firstRightNephew.nodeValue), conversion);
         firstRightNephew.nodeValue = raiAmount + RAI;
         return;
       }
@@ -217,7 +226,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
   const firstLeftUncle = getPrevSibling(currencyNode.parentNode);
 
   if (firstLeftUncle && firstLeftUncle.nodeType === currencyNode.TEXT_NODE && isAmount(firstLeftUncle.nodeValue)) {
-    const raiAmount = currencyToRai(firstLeftUncle.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
+    const raiAmount = currencyToRai(extractAmount(firstLeftUncle.nodeValue), conversion);
     firstLeftUncle.nodeValue = raiAmount;
     currencyNode.nodeValue = currencyNode.nodeValue.replace(new RegExp(regExpDollar, 'gi'), RAI);
     return;
@@ -230,7 +239,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
     currencyNode.nodeValue = currencyNode.nodeValue.replace(new RegExp(regExpDollar, 'gi'), RAI);
 
     if (containsDecimals(firstLeftCousin.nodeValue)) {
-      const raiAmount = currencyToRai(firstLeftCousin.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
+      const raiAmount = currencyToRai(extractAmount(firstLeftCousin.nodeValue), conversion);
       firstLeftCousin.nodeValue = raiAmount;
       return;
     }
@@ -247,7 +256,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
         secondLeftCousin.nodeValue = raiAmount.split('.')[0];
       }
     } else {
-      const raiAmount = currencyToRai(firstLeftCousin.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
+      const raiAmount = currencyToRai(extractAmount(firstLeftCousin.nodeValue), conversion);
       firstLeftCousin.nodeValue = raiAmount;
     }
     return;
@@ -261,7 +270,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
     currencyNode.nodeValue = currencyNode.nodeValue.replace(new RegExp(regExpDollar, 'gi'), RAI);
 
     if (containsDecimals(firstLeftNephew.nodeValue)) {
-      const raiAmount = currencyToRai(firstLeftNephew.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
+      const raiAmount = currencyToRai(extractAmount(firstLeftNephew.nodeValue), conversion);
       firstLeftNephew.nodeValue = raiAmount;
       return;
     }
@@ -278,7 +287,7 @@ function searchAmount(currencyNode, regExpDollar, searchBothSides, conversion) {
         secondLeftNephew.nodeValue = '';
       }
     } else {
-      const raiAmount = currencyToRai(firstLeftNephew.nodeValue.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gi'))[0], conversion);
+      const raiAmount = currencyToRai(extractAmount(firstLeftNephew.nodeValue), conversion);
       firstLeftNephew.nodeValue = raiAmount;
     }
     return;
@@ -317,8 +326,8 @@ function containsDecimals(amount) {
  * Transforms price node
  */
 function convertPrice(node, regExpPrice, conversion) {
-  node.nodeValue.match(regExpPrice).forEach(price => { 
-    const raiAmount = currencyToRai(price.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'gmi'))[0], conversion);
+  node.nodeValue.match(new RegExp(regExpPrice, 'gi')).forEach(price => { 
+    const raiAmount = currencyToRai(extractAmount(price), conversion);
     node.nodeValue = node.nodeValue.replace(price, raiAmount + RAI);
   });
 }
@@ -328,7 +337,7 @@ function convertPrice(node, regExpPrice, conversion) {
  * Converts amount to RAI
  */
 function currencyToRai(amountString, conversion) {
-  let amountAbbrev = amountString.match(new RegExp(regExpAmountAbbrev, 'gmi'));
+  let amountAbbrev = amountString.match(new RegExp(regExpAmountAbbrev, 'gi'));
   if (amountAbbrev) {
     amountString = amountString.replace(amountAbbrev, '');
   } else {
@@ -337,13 +346,13 @@ function currencyToRai(amountString, conversion) {
 
   let thousandsSeparator = ',';
   let decimalSeparator = '.';
-  if (!isEnglishNotation(amountString)) {
+  if (!isAngloNotation(amountString)) {
     thousandsSeparator = '.';
     decimalSeparator = ',';
   }
 
   const decimals = storedData.decimals < 0 ? numDecimals(amountString, decimalSeparator) : storedData.decimals;
-  const amountNumber = Number(amountString.replace(new RegExp(thousandsSeparator, 'g'), ''));
+  const amountNumber = Number(amountString.replace(new RegExp('\\' + thousandsSeparator, 'g'), '').replace(new RegExp('\\' + decimalSeparator), '.'));
   const minToShow = 1 / Math.pow(10, decimals);
   const raiNumber = Number(amountNumber / conversion);
   if (Math.abs(raiNumber) > 0 && Math.abs(raiNumber) < minToShow) {
@@ -392,9 +401,28 @@ function getPrevSibling(node) {
 
 
 /**
-* Returns true if the amount is in English notation (commas for thousands separators and dot for decimals)
-* and false if it is non-English notation (dots for thousands separators and comma for decimals)
+* Returns true if the amount is in Anglo Saxon notation (commas for thousands separators and dot for decimals)
+* and false if it is not Anglo Saxon notation (dots for thousands separators and comma for decimals)
 */
-function isEnglishNotation(amountString) {
-  return new RegExp(regExpAmount1).test(amountString);
+function isAngloNotation(amountString) {
+  return new RegExp('^(' + regExpAmountThousandsComma + '|' + regExpAmountDecimalDot + ')$').test(amountString);
+}
+
+
+
+/**
+* Extracts the amount part of a string
+*/
+function extractAmount(value) {
+  return value.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'i'))[0];
+
+  // TODO remove
+  // for (let i=0; i<regExpAmountArray.length; i++) {
+  //   const match = value.match(new RegExp('-?' + regExpAmountArray[i] + regExpAmountAbbrev + '?', 'i'));
+  //   if (match && match.length) {
+  //     return match[0];
+  //   }
+  // };
+
+  // return null;
 }

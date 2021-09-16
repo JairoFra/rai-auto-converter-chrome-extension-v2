@@ -1,4 +1,4 @@
-# RAI Auto-Converter
+# RAI Auto-Converter v2
 
 <p align="center">
 <img style="text-align: center;" src="/assets/icons/icon128.png">
@@ -11,7 +11,7 @@ The extension is an evolution of [this](https://github.com/JairoFra/rai-auto-con
 
 ## Installation
 
-You can install it from the [Chrome Web Store](TODO).
+You can install it from the [Chrome Web Store](TO-DO).
 
 Alternatively, to install the extension locally:
 1. [**Download**](https://github.com/JairoFra/rai-auto-converter-chrome-extension-v2/archive/refs/heads/master.zip) the repository and unpack it.
@@ -22,25 +22,13 @@ Alternatively, to install the extension locally:
 ## Features
 
 ### Extensive range of expressions detected
-Examples:
-* 1 $
-* $ 1
-* 1 USD
-* 1 U.S.D.
-* -1 US$
-* 1 U.S.$
-* 1 US $
-* 1 U.S. $
-* USD 1
-* U.S.D. 1
-* US$ 1
-* U.S.$ 1
-* US $ 1
-* U.S. $ 1
-* -1 us dollars
-* 1 US Dollar
-* 1 Dollars
-* 1 DOLLAR
+- Different amount formats (1,111.11 - 1.111,11)
+
+### Support for different currencies
+**Fiat**: USD, EUR, GBP, JPY, CNY, KRW, INR
+
+**Crypto**: BCH, BNB, BTC, DOT, ETH, LINK, LTC, XRP, BUSD, ADA, DAI, DOGE, FLOAT, LUSD, sUSD, SOL, USDT, UNI, USDC, USDP/PAX, UST
+
 
 ### Conversion for small amounts
 If the result of the conversion is greater than 0, but the decimal part is not to be shown, it will be displayed as "lower than" or "greater than" the smallest amount able to be shown. 
@@ -60,14 +48,13 @@ It detects amount and symbol in different nodes. This includes:
 * Nodes separated by spaces or together
 * Amount present at right or left of the symbol (depending on the validity of the format)
 
-
 ![screenshot1](/assets/screenshots/screenshot1.gif)
 
 ### Detection of new nodes and changes in existing nodes
 ![screenshot2](/assets/screenshots/screenshot2.gif)
 
 ### Ability to enable and disable transformation in real time
-Enabling the automatic transformation will transform the current prices from USD to RAI without the need of refreshing the page.
+Enabling the automatic transformation will transform the current prices to RAI without the need of refreshing the page.
 Disabling the automatic transformation will stop detecting new changes in the page without the need of refreshing it.
 
 
@@ -81,64 +68,12 @@ Also, it can be tested in some websites like:
 
 
 
-## Configuration options
-
-TODO
-
-#### On/Off switch
-To start and stop automatic conversion to RAI. It works in real time. 
-
-#### Number of decimals
-The number of decimals in RAI amount to be displayed in the HTML.
-By default, the amount in RAI will be shown with the same number of decimals found in the original currency. However, the value of decimals to be shown can be adjusted by the user to a specific value.
-* Minimum: 0
-* Maximum: 18
-* Default: Taken from converted amount
-
-#### Conversion rate interval
-The conversion rate is continuously updated in order to offer an accurate conversion without delays. The update interval time can be adjusted in seconds.
-* Minimum: 3
-* Maximum: 3600 (1 hour)
-* Default: 300 (5 minutes)
-
-#### Dark mode
-Toggle between light mode and dark mode interface.
-
-#### Price badge
-If selected, shows the current conversion for RAI to USD in the extension icon.
-
-
-## Extension icon
-<table>
-  <tr>
-    <th><img src="/assets/icons/icon_32.png"></th>
-    <td>Conversion enabled</td>
-  </tr>
-  <tr>
-    <td><img src="/assets/icons/icon_32_disabled.png"></td>
-    <td>Conversion disabled</td>
-  </tr>
-  <tr>
-    <td><img src="/assets/icons/icon_32_blocked.png"></td>
-    <td>Conversion diabled for this website (blacklisted)</td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <td><img src="/assets/screenshots/badge-on.png"></td>
-    <td>Price badge enbled</td>
-  </tr>
-  <tr>
-    <td><img src="/assets/screenshots/badge-off.png"></td>
-    <td>Price badge disabled</td>
-  </tr>
-</table>
+## User guide
+Consult [here](/docs/user-guide.md).
 
 
 ## Further developments
-New features to be added:
-* Expand the number of currencies supported
+* Expand the number of currencies supported. More info [here](/docs/currencies.md).
 * New proposals from the [Reflexer Labs](https://reflexer.finance/) community
 
 
@@ -147,4 +82,3 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ## Issues
 Please, submit any issues or proposals [here](https://github.com/JairoFra/rai-auto-converter-chrome-extension-v2/issues).
-

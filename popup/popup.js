@@ -4,7 +4,6 @@ const raiPriceEl = document.getElementById('raiPrice');
 const enabledInput = document.getElementById('enabledPop');
 const optionsBtn = document.getElementById('optionsBtn');
 const blacklistBtn = document.getElementById('blacklistBtn');
-const reflexerBtn = document.getElementById('reflexerPop');
 
 
 /**
@@ -116,11 +115,3 @@ blacklistBtn.addEventListener('click', e => {
 //     }
 //   });
 // });
-
-
-/**
- * Opens reflexer website when icon is clicked
- */
-reflexerBtn.addEventListener('click', e => {
-  chrome.tabs.create({url: 'https://reflexer.finance/'});
-});

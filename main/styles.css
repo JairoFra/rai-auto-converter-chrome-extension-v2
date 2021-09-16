@@ -217,3 +217,12 @@ input:checked + .slider:before {
 .slide input[type=checkbox]:checked + label {
 	left: 43px;
 }
+
+.reflexer {
+  display: block;
+  text-align: center;
+}
+
+.small {
+  font-size: 50%;
+}
