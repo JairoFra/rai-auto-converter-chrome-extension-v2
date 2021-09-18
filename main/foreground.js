@@ -41,15 +41,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 observer = new MutationObserver(mutations => {
   mutations.forEach(function(mutation) {
     if (mutation.type === 'characterData') {
-      // if (mutation.target.nodeValue.includes('$')) {
-      //   debugger
-      // } // TODO
       searchCurrencies(mutation.target.parentNode);
     } else if (mutation.type === 'childList') {
       mutation.addedNodes.forEach(node => {
-        // if (node.nodeValue && node.nodeValue.includes('$')) {
-        //   debugger
-        // } // TODO
         searchCurrencies(node);
       });
     }
@@ -83,8 +77,8 @@ regExpAmountThousandsDot = '(?:[1-9]\\d{0,2}\\.(?:\\d{3}\\.)*\\d{3})(,\\d+)?(?!\
 regExpAmountDecimalDot = '(?:\\d+)(\\.\\d+)'; // e.g. 1000.11
 regExpAmountDecimalComma = '(?:\\d+)(,\\d+)'; // e.g. 1000,11
 regExpAmountNoSeparator = '\\d+'; // e.g. 1000
-
-regExpAmount = '(-?(' + regExpAmountThousandsComma + '|' + regExpAmountThousandsDot + '|' + regExpAmountDecimalDot + '|' + regExpAmountDecimalComma + '|' + regExpAmountNoSeparator + '))';
+regExpAmount = '(-?(' + regExpAmountThousandsComma + '|' + regExpAmountThousandsDot + '|' + 
+  + regExpAmountDecimalDot + '|' + regExpAmountDecimalComma + '|' + regExpAmountNoSeparator + '))';
 regExpAmountAbbrev = '(\\s?(K|M|million|B|billion|T|trillion)\\b)';
 
 
@@ -103,7 +97,8 @@ function searchCurrencies(rootNode) {
  */
 function searchCurrency(rootNode, currency) {
   const avoidedChars = '[a-zA-Z0-9\$€¥£₩₹₿]';
-  const regExpPriceJoined =  '(?<!' + avoidedChars + ')(' + regExpAmount + '((' + currency.regExps[0] + ')(?!' + avoidedChars + ')))|(((?<!' + avoidedChars + ')(' + currency.regExps[0] + '))' + regExpAmount + regExpAmountAbbrev + '?)(?!' + avoidedChars + ')'; // Amount and currency without space
+  const regExpPriceJoined =  '(?<!' + avoidedChars + ')(' + regExpAmount + '((' + currency.regExps[0] + ')(?!' + avoidedChars + ')))|(((?<!' + 
+    + avoidedChars + ')(' + currency.regExps[0] + '))' + regExpAmount + regExpAmountAbbrev + '?)(?!' + avoidedChars + ')'; // Amount and currency without space
   const regExpCurrencyShort = '(?<!' + avoidedChars + ')(' + currency.regExps[0] + ')(?!' + avoidedChars + ')'; // Currency (amount can be at left or right)
   let regExpCurrencyLong = null;
   if (currency.regExps.length > 1) {
@@ -351,7 +346,7 @@ function currencyToRai(amountString, conversion) {
     decimalSeparator = ',';
   }
 
-  const decimals = storedData.decimals < 0 ? numDecimals(amountString, decimalSeparator) : storedData.decimals;
+  const decimals = storedData.customDecimals ? storedData.decimals : numDecimals(amountString, decimalSeparator);
   const amountNumber = Number(amountString.replace(new RegExp('\\' + thousandsSeparator, 'g'), '').replace(new RegExp('\\' + decimalSeparator), '.'));
   const minToShow = 1 / Math.pow(10, decimals);
   const raiNumber = Number(amountNumber / conversion);
@@ -409,20 +404,9 @@ function isAngloNotation(amountString) {
 }
 
 
-
 /**
 * Extracts the amount part of a string
 */
 function extractAmount(value) {
   return value.match(new RegExp(regExpAmount + regExpAmountAbbrev + '?', 'i'))[0];
-
-  // TODO remove
-  // for (let i=0; i<regExpAmountArray.length; i++) {
-  //   const match = value.match(new RegExp('-?' + regExpAmountArray[i] + regExpAmountAbbrev + '?', 'i'));
-  //   if (match && match.length) {
-  //     return match[0];
-  //   }
-  // };
-
-  // return null;
 }

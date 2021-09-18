@@ -1,15 +1,15 @@
 let storedData;
 
-const minDecimals = -1; // TODO change to 0
+const minDecimals = 0;
 const maxDecimals = 18;
-const minInterval = 3;
+const minInterval = 5;
 const maxInterval = 3600;
 
-const decimalsInput = document.getElementById('decimals');
-const intervalInput = document.getElementById('interval');
 const darkModeInput = document.getElementById('darkMode');
 const showBadgeInput = document.getElementById('showBadgeOpt');
-const priceTypeInput = document.getElementById('priceType');
+const customDecimalsInput = document.getElementById('customDecimalsOpt');
+const decimalsInput = document.getElementById('decimals');
+const intervalInput = document.getElementById('interval');
 const selectAllFiatBtn = document.getElementById('selectAllFiat');
 const unselectAllFiatBtn = document.getElementById('unselectAllFiat');
 const selectAllCryptoBtn = document.getElementById('selectAllCrypto');
@@ -29,14 +29,30 @@ chrome.storage.local.get('data', (res) => {
   renderCurrencyOptions();
   renderBlacklist();
 
-  decimalsInput.value = storedData.decimals;
   intervalInput.value = storedData.refreshInterval;
   darkModeInput.checked = storedData.darkMode;
   showBadgeInput.checked = storedData.showBadge;
+  customDecimalsInput.checked = storedData.customDecimals;
+  decimalsInput.value = storedData.decimals;
+
+  decimalsInput.parentNode.classList = storedData.customDecimals ? 'input-group' : 'input-group display-none';
 
   if (storedData.darkMode) {
     document.body.classList.add('dark');
   }
+});
+
+
+/**
+ * Manages changes custom decimals switch
+ */
+customDecimalsInput.addEventListener('change', e => {
+  storedData.customDecimals = e.target.checked;
+
+  decimalsInput.parentNode.classList = storedData.customDecimals ? 'input-group' : 'input-group display-none';
+
+  // Updates preferences
+  chrome.storage.local.set({ data: storedData });
 });
 
 
@@ -58,9 +74,6 @@ let decimalsChanges = e => {
   
     // Updates preferences
     chrome.storage.local.set({ data: storedData });
-      
-    // Sends message to the background and popup
-    chrome.runtime.sendMessage({ type: 'decimals', value: storedData.decimals });
 };
 
 decimalsInput.addEventListener('change', decimalsChanges);
@@ -76,14 +89,14 @@ let intervalChanges = e => {
   if (value < minInterval) {
     if (e.type = 'change') {
       value = minInterval;
-      decimalsInput.value = value;
+      intervalInput.value = value;
     } else {
       return;
     }
   } else if (value > maxInterval) {
     if (e.type = 'change') {
       value = maxInterval;
-      decimalsInput.value = value;
+      intervalInput.value = value;
     } else {
       return;
     }
@@ -117,7 +130,7 @@ darkModeInput.addEventListener('change', e => {
   // Updates preferences
   chrome.storage.local.set({ data: storedData });
 
-  // Sends message to the background and popup
+  // Sends message to the popup
   chrome.runtime.sendMessage({ type: 'darkMode', value: storedData.darkMode });
 });
 
@@ -131,7 +144,7 @@ showBadgeInput.addEventListener('change', e => {
   // Updates preferences
   chrome.storage.local.set({ data: storedData });
 
-  // Sends message to the background and popup
+  // Sends message to the background
   chrome.runtime.sendMessage({ type: 'showBadge', value: storedData.showBadge });
 });
 
@@ -249,6 +262,7 @@ function updateCurrencies() {
  */
 function renderBlacklist() {
   let blacklistContainer = document.getElementById('blacklist');
+  blacklistContainer.innerHTML = '';
 
   if (storedData.blacklist.length) {
     let button = document.createElement('a');
@@ -295,7 +309,7 @@ function startBlacklistListeners() {
 
   blacklistButtons.forEach(element => {
     element.addEventListener('click', e => {
-      const index = storedData.blacklist.indexOf(e.target.previousSibling.innerText);
+      const index = storedData.blacklist.indexOf(e.target.nextSibling.innerText);
       if (index > -1) {
         storedData.blacklist.splice(index, 1);
   
@@ -335,3 +349,14 @@ function startBlacklistListeners() {
     blacklistContainer.appendChild(span);
   });
 }
+
+
+/**
+ * Listens to blacklist updates sent from the popup
+ */
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type == 'blacklist') {    
+    storedData.blacklist = message.value;
+    renderBlacklist();
+  }
+});

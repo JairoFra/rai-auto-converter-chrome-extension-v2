@@ -1,10 +1,13 @@
 var storedData;
+var hostname;
+var blacklisted;
 
 const raiPriceEl = document.getElementById('raiPrice');
 const enabledInput = document.getElementById('enabledPop');
 const optionsBtn = document.getElementById('optionsBtn');
 const blacklistBtn = document.getElementById('blacklistBtn');
-
+const blacklistIcon = document.getElementById('blacklistIcon');
+const blacklistText = document.getElementById('blacklistText');
 
 /**
  * Gets stored data
@@ -24,6 +27,8 @@ chrome.storage.local.get('data', (res) => {
   if (storedData.darkMode) {
     document.body.classList.add('dark');
   }
+
+  initBlacklistButton();
 });
 
 
@@ -32,9 +37,7 @@ chrome.storage.local.get('data', (res) => {
  */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
-    case 'conversion': 
-      // TODO localize
-      console.log("price updated: ", message.value);
+    case 'conversion':
       raiPriceEl.textContent = Number(message.value).toFixed(2);
       break;
 
@@ -72,46 +75,49 @@ optionsBtn.addEventListener('click', e => {
 });
 
 
-/**
- * Adds domain to backlist when button is clicked
- */
-blacklistBtn.addEventListener('click', e => {
+function initBlacklistButton() {
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
     if (!tabs[0] || !tabs[0].url) {
       return;
     }
-    
-    const hostname = new URL(tabs[0].url).hostname;
-    storedData.blacklist.push(hostname);
 
-    // Stores updated data
-    chrome.storage.local.set({ data: storedData });
-  
-    // Sends message to the background
-    chrome.runtime.sendMessage({ type: 'blacklist', value: storedData.blacklist });
+    hostname = new URL(tabs[0].url).hostname;
+
+    if (storedData.blacklist.includes(hostname)) {
+      blacklistText.innerText = 'Remove from blacklist';
+      blacklistIcon.src = '../assets/images/ok.png'
+      blacklisted = true;
+    } else {
+      blacklistText.innerText = 'Blacklist this website';
+      blacklistIcon.src = '../assets/images/stop.png'
+      blacklisted = false;
+    }
+
+    blacklistBtn.classList = 'button';
   });
-});
-
+}
 
 /**
- * Removes domain from backlist when button is clicked
+ * Adds domain to backlist when button is clicked
  */
-// blacklistOffBtn.addEventListener('click', e => {
-//   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-//     if (!tabs[0] || !tabs[0].url) {
-//       return;
-//     }
+blacklistBtn.addEventListener('click', e => {
+  
+  if (blacklisted) {
+    const index = storedData.blacklist.indexOf(hostname);
+    if (index > -1) {
+      storedData.blacklist.splice(index, 1);
+    } else {
+      return;
+    }
+  } else {
+    storedData.blacklist.push(hostname);
+  }
 
-//     const hostname = new URL(tabs[0].url).hostname;
-//     const index = storedData.blacklist.indexOf(hostname);
-//     if (index > -1) {
-//       storedData.blacklist.splice(index, 1);
+  // Stores updated data
+  chrome.storage.local.set({ data: storedData });
 
-//       // Stores updated data
-//       chrome.storage.local.set({ data: storedData });
-    
-//       // Sends message to the background
-//       chrome.runtime.sendMessage({ type: 'blacklist', value: storedData.blacklist });
-//     }
-//   });
-// });
+  // Sends message to the background
+  chrome.runtime.sendMessage({ type: 'blacklist', value: storedData.blacklist });
+
+  initBlacklistButton();
+});

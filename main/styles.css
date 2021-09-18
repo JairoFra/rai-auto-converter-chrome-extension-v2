@@ -155,8 +155,9 @@ input:checked + .slider:before {
   background-position-y: 1px;
 }
 
-
-
+.display-none {
+  display: none;
+}
 
 .hidden {
 	visibility: hidden;

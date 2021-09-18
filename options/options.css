@@ -138,7 +138,7 @@ input::-webkit-inner-spin-button {
   transform: rotate(45deg);
 }
 
-h2 {
+h1 {
   margin-top: 0;
 }
 
@@ -164,4 +164,13 @@ h3 {
 
 #reflexerOpt {
   text-align: center;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.space-between div p {
+  font-weight: bold;
 }

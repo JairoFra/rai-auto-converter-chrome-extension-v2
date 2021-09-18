@@ -1,9 +1,10 @@
 const initialData = {
-  decimals: -1,
-  refreshInterval: 300,
   enabled: true,
-  showBadge: true,
   darkMode: false,
+  showBadge: true,
+  customDecimals: false,
+  decimals: 2,
+  refreshInterval: 300,
   currencies: currencies,
   blacklist: []
 }
@@ -99,10 +100,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       storedData.enabled = message.value;
       break;
 
-    case 'decimals': 
-      storedData.decimals = message.value;
-      break;
-
     case 'currencies': 
       storedData.currencies = message.value;
       break;
@@ -126,6 +123,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
  * Updates the conversion rates for RAI
  */
 async function updateConversions() {
+  // Direct conversions
   const directConversions = await getDirectConversions();
 
   if (directConversions) {
@@ -145,6 +143,7 @@ async function updateConversions() {
     }
   }
 
+  // Indirect conversions
   const indirectConversions = await getIndirectConversions();
 
   if (indirectConversions) {
@@ -167,7 +166,7 @@ async function updateConversions() {
 
 
 /**
- * Gets current market prices form CoinGecko API 
+ * Gets direct market prices form CoinGecko API 
  * https://www.coingecko.com/api/documentations/v3
  */
 async function getDirectConversions() {
@@ -192,7 +191,7 @@ async function getDirectConversions() {
 }
 
 /**
- * Gets current market prices form CoinGecko API 
+ * Gets indirect market prices form CoinGecko API 
  * https://www.coingecko.com/api/documentations/v3
  */
 async function getIndirectConversions() {

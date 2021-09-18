@@ -79,6 +79,16 @@ const currencies = [
   },
   // Crypto
   {
+    id: 'cardano',
+    ticker: 'ADA',
+    regExps: [
+      'ADA|₳|₳DA'
+    ],
+    enabled: true,
+    fiat: false,
+    directConversion: false
+  },
+  {
     id: 'bch',
     ticker: 'BCH',
     regExps: [
@@ -102,12 +112,44 @@ const currencies = [
     id: 'btc',
     ticker: 'BTC',
     regExps: [
-      'BTC|₿',
+      'BTC|₿|₿TC',
       'Bitcoins?'
     ],
     enabled: true,
     fiat: false,
     directConversion: true
+  },
+  {
+    id: 'binance-usd',
+    ticker: 'BUSD',
+    regExps: [
+      'BUSD'
+    ],
+    enabled: true,
+    fiat: false,
+    directConversion: false
+  },
+  {
+    id: 'dai',
+    ticker: 'DAI',
+    ticker: 'DAI',
+    regExps: [
+      'DAI'
+    ],
+    enabled: true,
+    fiat: false,
+    directConversion: false
+  },
+  {
+    id: 'dogecoin',
+    ticker: 'DOGE',
+    regExps: [
+      'DOGE|Ð|ÐOGE',
+      'Dogecoins?'
+    ],
+    enabled: true,
+    fiat: false,
+    directConversion: false
   },
   {
     id: 'dot',
@@ -151,58 +193,6 @@ const currencies = [
     directConversion: true
   },
   {
-    id: 'ripple',
-    ticker: 'XRP',
-    regExps: [
-      'XRP'
-    ],
-    enabled: true,
-    fiat: false,
-    directConversion: true
-  },
-  {
-    id: 'binance-usd',
-    ticker: 'BUSD',
-    regExps: [
-      'BUSD'
-    ],
-    enabled: true,
-    fiat: false,
-    directConversion: false
-  },
-  {
-    id: 'cardano',
-    ticker: 'ADA',
-    regExps: [
-      'ADA'
-    ],
-    enabled: true,
-    fiat: false,
-    directConversion: false
-  },
-  {
-    id: 'dai',
-    ticker: 'DAI',
-    ticker: 'DAI',
-    regExps: [
-      'DAI'
-    ],
-    enabled: true,
-    fiat: false,
-    directConversion: false
-  },
-  {
-    id: 'dogecoin',
-    ticker: 'DOGE',
-    regExps: [
-      'DOGE|Ð',
-      'Dogecoins?'
-    ],
-    enabled: true,
-    fiat: false,
-    directConversion: false
-  },
-  {
     id: 'float-protocol-float',
     ticker: 'FLOAT',
     regExps: [
@@ -223,16 +213,6 @@ const currencies = [
     directConversion: false
   },
   {
-    id: 'nusd',
-    ticker: 'sUSD',
-    regExps: [
-      'sUSD'
-    ],
-    enabled: true,
-    fiat: false,
-    directConversion: false
-  },
-  {
     id: 'solana',
     ticker: 'SOL',
     regExps: [
@@ -243,10 +223,10 @@ const currencies = [
     directConversion: false
   },
   {
-    id: 'tether',
-    ticker: 'USDT',
+    id: 'nusd',
+    ticker: 'sUSD',
     regExps: [
-      'USDT'
+      'sUSD'
     ],
     enabled: true,
     fiat: false,
@@ -283,6 +263,16 @@ const currencies = [
     directConversion: false
   },
   {
+    id: 'tether',
+    ticker: 'USDT',
+    regExps: [
+      'USDT'
+    ],
+    enabled: true,
+    fiat: false,
+    directConversion: false
+  },
+  {
     id: 'terrausd',
     ticker: 'UST',
     regExps: [
@@ -291,5 +281,15 @@ const currencies = [
     enabled: true,
     fiat: false,
     directConversion: false
+  },
+  {
+    id: 'xrp',
+    ticker: 'XRP',
+    regExps: [
+      'XRP'
+    ],
+    enabled: true,
+    fiat: false,
+    directConversion: true
   }
 ];

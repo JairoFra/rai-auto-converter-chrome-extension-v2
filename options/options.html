@@ -16,34 +16,41 @@
         </div>
 
         <div class="card">
-          <h2>Preferences</h2>
+          <h1>Preferences</h1>
           <div class="switch-container">
-            <label>Dark mode</label>
+            <label>Dark mode:</label>
             <label class="switch dark-opt">
               <input id="darkMode" type="checkbox">
               <span class="slider"></span>
             </label>
           </div>
-          <div class="switch-container">
-            <label>Show badge</label>
+          <div class="switch-container input-group">
+            <label>Show price badge:</label>
             <label class="switch">
               <input id="showBadgeOpt" type="checkbox" checked>
               <span class="slider"></span>
             </label>
           </div>
-          <div class="input-group">
+          <div class="switch-container input-group">
+            <label>Use custom number of decimals:</label>
+            <label class="switch">
+              <input id="customDecimalsOpt" type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="input-group display-none">
             <label>Number of decimals:</label>
             <input id="decimals" class="form-input" type="number" min="0" max="18" value="2">
           </div>
           <div class="input-group">
             <label>Conversion rate interval:</label>
-            <input id="interval" class="form-input" type="number" min="3" max="3600" value="300">
+            <input id="interval" class="form-input" type="number" min="5" max="3600" value="300">
             <span>secs.</span>
           </div>
         </div>
 
         <div class="card" id="currencies">
-          <h2>Currencies</h2>
+          <h1 style="margin-bottom: 10px;">Currencies</h1>
           <div id="fiatCurrencies">
             <div>
               <h3>Fiat</h3>
@@ -60,17 +67,23 @@
           </div>
         </div>
 
-        <div class="card" id="blacklist">
-          <h2>Blacklist</h2>
+        <div class="card">
+          <h1>Blacklist</h1>
+          <div id="blacklist"></div>
         </div>
 
         <div class="card card-bottom">
-          <p>
-            <a href="https://github.com/JairoFra/rai-auto-converter-chrome-extension-v2#rai-auto-converter" target="_blank">Documentation</a>
-          </p>
-          <p>
-            <a href="mailto:hi.raw.labs@gmail.com?Subject=Issue RAI Auto-Converter v2">Report an issue</a>
-          </p>
+          <div class="space-between">
+            <p>version 2.0.0</p>
+            <div>
+              <p>
+                <a href="https://github.com/JairoFra/rai-auto-converter-chrome-extension-v2/blob/master/docs/user-guide.md#popup" target="_blank">Documentation</a>
+              </p>
+              <p>
+                <a href="mailto:hi.raw.labs@gmail.com?Subject=Issue RAI Auto-Converter v2&Body=-Browser (name and version):%0D%0A-Issue:%0D%0A">Report an issue</a>
+              </p>
+            </div>
+          </div>
           <a href="https://reflexer.finance/" target="_blank" class="reflexer">
             <img class="dark-logo" src="../assets/images/reflexer.svg">
             <img class="light-logo" src="../assets/images/reflexer-white.svg">
