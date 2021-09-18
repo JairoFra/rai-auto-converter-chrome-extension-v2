@@ -1,12 +1,12 @@
 # Popup
 
 ### Acess to Settings
-You can access the Settings window from the Popup.
+You can access the Settings window by clicking the cog icon at the top left side.
 
 ### On/Off switch
 To start and stop automatic conversion to RAI. It works in real time. 
 
-### Block/Unblock website
+### Add/remove a website to/from blacklist
 You can add and remove individual websites to the blacklist. For all websites included in the blacklist the extension will not automatically convert other currencies to RAI.
 
 
@@ -30,12 +30,16 @@ If selected, shows the current conversion for RAI to USD in the extension icon.
   </tr>
 </table>
 
-### Number of decimals
-The number of decimals in RAI amount to be displayed in the HTML.
+
+### Use custom number of decimals
 By default, the amount in RAI will be shown with the same number of decimals found in the original currency. However, the value of decimals to be shown can be adjusted by the user to a specific value.
+* Default value: false
+
+### Number of decimals
+The number of decimals in RAI amount to be displayed in the HTML. This field only applies if it has been selected to use custom number of decimals.
 * Minimum: 0
 * Maximum: 18
-* Default: Taken from converted amount
+* Default: 2
 
 ### Conversion rate interval
 The conversion rate is continuously updated in order to offer an accurate conversion without delays. The update interval time can be adjusted in seconds.

@@ -77,8 +77,8 @@ regExpAmountThousandsDot = '(?:[1-9]\\d{0,2}\\.(?:\\d{3}\\.)*\\d{3})(,\\d+)?(?!\
 regExpAmountDecimalDot = '(?:\\d+)(\\.\\d+)'; // e.g. 1000.11
 regExpAmountDecimalComma = '(?:\\d+)(,\\d+)'; // e.g. 1000,11
 regExpAmountNoSeparator = '\\d+'; // e.g. 1000
-regExpAmount = '(-?(' + regExpAmountThousandsComma + '|' + regExpAmountThousandsDot + '|' + 
-  + regExpAmountDecimalDot + '|' + regExpAmountDecimalComma + '|' + regExpAmountNoSeparator + '))';
+regExpAmount = '(-?(' + regExpAmountThousandsComma + '|' + regExpAmountThousandsDot + '|' + regExpAmountDecimalDot + 
+  '|' + regExpAmountDecimalComma + '|' + regExpAmountNoSeparator + '))';
 regExpAmountAbbrev = '(\\s?(K|M|million|B|billion|T|trillion)\\b)';
 
 
@@ -98,7 +98,7 @@ function searchCurrencies(rootNode) {
 function searchCurrency(rootNode, currency) {
   const avoidedChars = '[a-zA-Z0-9\$€¥£₩₹₿]';
   const regExpPriceJoined =  '(?<!' + avoidedChars + ')(' + regExpAmount + '((' + currency.regExps[0] + ')(?!' + avoidedChars + ')))|(((?<!' + 
-    + avoidedChars + ')(' + currency.regExps[0] + '))' + regExpAmount + regExpAmountAbbrev + '?)(?!' + avoidedChars + ')'; // Amount and currency without space
+    avoidedChars + ')(' + currency.regExps[0] + '))' + regExpAmount + regExpAmountAbbrev + '?)(?!' + avoidedChars + ')'; // Amount and currency without space
   const regExpCurrencyShort = '(?<!' + avoidedChars + ')(' + currency.regExps[0] + ')(?!' + avoidedChars + ')'; // Currency (amount can be at left or right)
   let regExpCurrencyLong = null;
   if (currency.regExps.length > 1) {

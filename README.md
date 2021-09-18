@@ -13,7 +13,7 @@ The extension is an evolution of [this](https://github.com/JairoFra/rai-auto-con
 
 ## Installation
 
-You can install it from the [Chrome Web Store](TODO).
+The extension has been submitted for publication to the [Chrome Web Store](https://chrome.google.com/webstore/category/extensions) and is currently in the review phase.
 
 Alternatively, to install the extension locally:
 1. [**Download**](https://github.com/JairoFra/rai-auto-converter-chrome-extension-v2/archive/refs/heads/master.zip) the repository and unpack it.
@@ -25,12 +25,13 @@ Alternatively, to install the extension locally:
 
 ### Extensive range of expressions detected
 - Different amount formats (1,111.11 - 1.111,11)
+- Abbreviations for thousands (K), millions (M), billions (B) and trillions (T)
+- Short and long form of the currencies ($1 - 1 USD - 1 dollar ...)
+- Negative numbers
 
 ### Support for different currencies
-**Fiat**: USD, EUR, GBP, JPY, CNY, KRW, INR
-
-**Crypto**: BCH, BNB, BTC, DOT, ETH, LINK, LTC, XRP, BUSD, ADA, DAI, DOGE, FLOAT, LUSD, sUSD, SOL, USDT, UNI, USDC, USDP/PAX, UST
-
+- **Fiat**: USD, EUR, GBP, JPY, CNY, KRW, INR
+- **Crypto**: BCH, BNB, BTC, DOT, ETH, LINK, LTC, XRP, BUSD, ADA, DAI, DOGE, FLOAT, LUSD, sUSD, SOL, USDT, UNI, USDC, USDP/PAX, UST
 
 ### Conversion for small amounts
 If the result of the conversion is greater than 0, but the decimal part is not to be shown, it will be displayed as "lower than" or "greater than" the smallest amount able to be shown. 
@@ -54,13 +55,14 @@ It detects amount and symbol in different nodes. This includes:
 
 ### Detection of new nodes and changes in existing nodes
 ![screenshot2](/assets/screenshots/screenshot2.gif)
+![screenshot3](/assets/screenshots/screenshot3.gif)
 
 ### Ability to enable and disable transformation in real time
 Enabling the automatic transformation will transform the current prices to RAI without the need of refreshing the page.
 Disabling the automatic transformation will stop detecting new changes in the page without the need of refreshing it.
 
 ### Light and dark mode UI
-
+![light-dark-ui](/assets/screenshots/light-dark-ui.png)
 
 
 ## Testing
@@ -74,7 +76,6 @@ Also, it can be tested in some websites like:
 * [CoinMarketCap (Spanish)](https://coinmarketcap.com/es/)
 * [Uniswap](https://info.uniswap.org/#/)
 
-
 ## User guide
 Consult [here](/docs/user-guide.md).
 
@@ -86,6 +87,7 @@ Consult [here](/docs/user-guide.md).
 
 ## License
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+
 
 ## Issues
 Please, submit any issues or proposals [here](https://github.com/JairoFra/rai-auto-converter-chrome-extension-v2/issues).
