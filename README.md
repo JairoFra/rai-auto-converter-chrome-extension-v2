@@ -26,7 +26,7 @@ Alternatively, to install the extension locally:
 ### Extensive range of expressions detected
 - Different amount formats (1,111.11 - 1.111,11)
 - Abbreviations for thousands (K), millions (M), billions (B) and trillions (T)
-- Short and long form of the currencies ($1 - 1 USD - 1 dollar ...)
+- Short and long form of the currencies ($1, 1 USD, 1 dollar...)
 - Negative numbers
 
 ### Support for different currencies
@@ -62,7 +62,13 @@ Enabling the automatic transformation will transform the current prices to RAI w
 Disabling the automatic transformation will stop detecting new changes in the page without the need of refreshing it.
 
 ### Light and dark mode UI
-![light-dark-ui](/assets/screenshots/light-dark-ui.png)
+![light-ui](/assets/screenshots/light-mode.png)
+![dark-ui](/assets/screenshots/dark-mode.png)
+
+### Optional badge icon with USD conversion in real time
+![icon-badge](/assets/screenshots/badge-on.png)
+
+### Blacklist of websites to disable the auto-conversion
 
 
 ## Testing

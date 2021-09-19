@@ -1,6 +1,7 @@
 # Popup
+![popup](/assets/screenshots/popup.png)
 
-### Acess to Settings
+### Access to Settings
 You can access the Settings window by clicking the cog icon at the top left side.
 
 ### On/Off switch
@@ -14,6 +15,8 @@ You can add and remove individual websites to the blacklist. For all websites in
 The settings can be accesed by clicking the cog icon in the popup or with right click over the extension icon and choosing "Options".
 
 ## Preferences
+![preferences](/assets/screenshots/preferences.png)
+
 ### Dark mode
 Toggle between light mode and dark mode interface.
 
@@ -49,9 +52,13 @@ The conversion rate is continuously updated in order to offer an accurate conver
 
 
 ## Currencies
+![currencies](/assets/screenshots/currencies.png)
+
 Select the currencies that will be converted to RAI.
 
 ## Blacklist
+![blacklist](/assets/screenshots/blacklist.png)
+
 You can add and remove individual websites to the blacklist. For all websites included in the blacklist the extension will not automatically convert other currencies to RAI.
 
 # Extension icon
