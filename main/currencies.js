@@ -165,7 +165,7 @@ const currencies = [
     id: 'eth',
     ticker: 'ETH',
     regExps: [
-      'ETH',
+      'ETH|Ξ',
       'Ether'
     ],
     enabled: true,

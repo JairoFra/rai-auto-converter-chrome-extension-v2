@@ -12,7 +12,7 @@ You can add and remove individual websites to the blacklist. For all websites in
 
 
 # Settings
-The settings can be accesed by clicking the cog icon in the popup or with right click over the extension icon and choosing "Options".
+The settings can be accessed by clicking the cog icon in the popup or with right click over the extension icon and choosing "Options".
 
 ## Preferences
 ![preferences](/assets/screenshots/preferences.png)
@@ -25,7 +25,7 @@ If selected, shows the current conversion for RAI to USD in the extension icon.
 <table>
   <tr>
     <td><img src="/assets/screenshots/badge-on.png"></td>
-    <td>Price badge enbaled</td>
+    <td>Price badge enabled</td>
   </tr>
   <tr>
     <td><img src="/assets/screenshots/badge-off.png"></td>
@@ -36,7 +36,6 @@ If selected, shows the current conversion for RAI to USD in the extension icon.
 
 ### Use custom number of decimals
 By default, the amount in RAI will be shown with the same number of decimals found in the original currency. However, the value of decimals to be shown can be adjusted by the user to a specific value.
-* Default value: false
 
 ### Number of decimals
 The number of decimals in RAI amount to be displayed in the HTML. This field only applies if it has been selected to use custom number of decimals.
@@ -76,6 +75,6 @@ The icon for the extension will appear different depending on the current status
   </tr>
   <tr>
     <td><img src="/assets/icons/icon_32_blocked.png"></td>
-    <td>Conversion diabled for this website (blacklisted)</td>
+    <td>Conversion disabled for the website of the active tab (blacklisted)</td>
   </tr>
 </table>
