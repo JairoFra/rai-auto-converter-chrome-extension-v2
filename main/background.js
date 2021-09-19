@@ -1,3 +1,5 @@
+importScripts('./currencies.js');
+
 const initialData = {
   enabled: true,
   darkMode: false,
