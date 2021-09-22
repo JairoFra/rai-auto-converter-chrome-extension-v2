@@ -13,7 +13,7 @@ The extension is an evolution of [this](https://github.com/JairoFra/rai-auto-con
 
 ## Installation
 
-The extension has been submitted for publication to the [Chrome Web Store](https://chrome.google.com/webstore/category/extensions) and is currently in the review phase.
+You can install it from the [Chrome Web Store](https://chrome.google.com/webstore/detail/rai-auto-converter-v2/jmjmjclpjkjcnmgidjcdldoldejehnlh).
 
 Alternatively, to install the extension locally:
 1. [**Download**](https://github.com/JairoFra/rai-auto-converter-chrome-extension-v2/archive/refs/heads/master.zip) the repository and unpack it.
