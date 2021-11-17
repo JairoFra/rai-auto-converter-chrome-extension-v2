@@ -8,7 +8,7 @@ Extension for Chromium based browsers to automatically convert different currenc
 
 It has been developed in pure JS, without external dependencies, and following the [Chrome Developers best practices](https://developer.chrome.com/docs/webstore/best_practices/), which include using the latest [Manifest V3](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/). 
 
-The extension is an evolution of [this](https://github.com/JairoFra/rai-auto-converter-chrome-extension) previous project. The design of the popup has been inspired by [this](https://github.com/oitowork/rai-chrome-extesion) other project.
+The design of the popup has been inspired by [this](https://github.com/oitowork/rai-chrome-extesion) other project.
 
 
 ## Installation
